@@ -1,4 +1,4 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127_3: 매끄러운 일체형 팔·손목 + 마우스 자유 드래그) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127_4: 화면 배치 위치 UI 제거 + 자유 드래그 전용) */
 (function () {
   const PREFS_KEY = 'moa_pip_prefs_v4';
   const SUB_KEY = 'moa_pass_subscribed';
@@ -177,16 +177,14 @@
           ${hairFrontSvg}
         </g>
 
-        <!-- 왼팔·왼손목·왼손 일체형 (몸통 안쪽에서 둥글게 뻗어 나와 절대 끊어지지 않음) -->
+        <!-- 왼팔·왼손목·왼손 일체형 -->
         <g class="av-limb-left">
-          <!-- 팔과 손목 피부 -->
           <path d="M 65 130 L 65 104 C 65 97 77 97 77 104 L 77 108 C 80 106.5 83 108.5 82 112 C 81 114.5 78.5 115.5 77 116 L 77 130 Z" fill="url(#skinGrad_${charKey})"/>
-          <!-- 둥근 소매 끝단 -->
           <path d="M 62 122 C 62 118.5 80 118.5 80 122 L 82 162 L 60 162 Z" fill="${c.outfit}"/>
           <path d="M 62.5 121.5 Q 71 119 79.5 121.5" stroke="${c.outfitAccent}" stroke-width="2.6" stroke-linecap="round" fill="none"/>
         </g>
 
-        <!-- 오른팔·오른손목·오른손 일체형 (몸통 안쪽에서 둥글게 뻗어 나와 절대 끊어지지 않음) -->
+        <!-- 오른팔·오른손목·오른손 일체형 -->
         <g class="av-limb-right">
           <path d="M 135 127 L 135 101 C 135 94 123 94 123 101 L 123 105 C 120 103.5 117 105.5 118 109 C 119 111.5 121.5 112.5 123 113 L 123 127 Z" fill="url(#skinGrad_${charKey})"/>
           <path d="M 138 119 C 138 115.5 120 115.5 120 119 L 118 162 L 140 162 Z" fill="${c.outfit}"/>
@@ -403,7 +401,6 @@
     const bgOpacityLabel = document.getElementById('demoBgOpacityLabel');
     const speedRange = document.getElementById('demoSpeedRange');
     const speedLabel = document.getElementById('demoSpeedLabel');
-    const posBtns = document.querySelectorAll('.pos-btn[data-pos]');
     const saveBtn = document.getElementById('demoSavePrefsBtn');
     const saveStatus = document.getElementById('demoSaveStatus');
 
@@ -455,13 +452,9 @@
       if (videoEl) {
         try { videoEl.playbackRate = Number(prefs.speed) || 1.0; } catch (e) {}
       }
-
-      posBtns.forEach((btn) => {
-        btn.classList.toggle('active', btn.getAttribute('data-pos') === prefs.position);
-      });
     }
 
-    /* 마우스 & 터치 자유 드래그 이동 (MouseEvent + TouchEvent 이중 지원으로 모든 브라우저 보장) */
+    /* 마우스 & 터치 자유 드래그 이동 */
     if (pipBox && screenBox) {
       let dragging = false;
       let startClientX = 0;
@@ -586,14 +579,6 @@
         applyPipStyles(false);
       });
     }
-    posBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        prefs.position = btn.getAttribute('data-pos') || 'bottom-right';
-        prefs.customX = null;
-        prefs.customY = null;
-        applyPipStyles(false);
-      });
-    });
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
         savePrefs(prefs);
