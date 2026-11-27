@@ -42,7 +42,7 @@
         <div style="margin-bottom:32px;">
           <div class="eyebrow">PROFILE & PIP PRESETS</div>
           <h1 class="section-title">내 프로필 및 수어 PIP 기본 설정</h1>
-          <p class="section-desc">저장한 아바타 크기·위치·투명도·재생 속도는 PIP 플레이어를 열 때마다 자동으로 반영됩니다.</p>
+          <p class="section-desc">저장한 아바타 캐릭터·크기·위치·투명도·재생 속도는 PIP 플레이어를 열 때마다 자동으로 반영됩니다.</p>
         </div>
 
         <div class="compose-card" style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
@@ -70,13 +70,13 @@
             </div>
 
             <div class="form-field" style="margin-bottom:0;">
-              <label for="profScale">기본 아바타 크기 (%)</label>
-              <input type="number" id="profScale" class="form-input" min="75" max="135" value="100" />
-            </div>
-
-            <div class="form-field" style="margin-bottom:0;">
-              <label for="profOpacity">기본 배경 투명도 (%)</label>
-              <input type="number" id="profOpacity" class="form-input" min="50" max="100" value="95" />
+              <label for="profCharacter">기본 수어 아바타 캐릭터</label>
+              <select id="profCharacter" class="form-select">
+                <option value="moa" selected>모아 · 표준 AI 아바타</option>
+                <option value="seoyeon">서연 · 감성 드라마형</option>
+                <option value="dohyun">도현 · 선명 전달형</option>
+                <option value="nova">노바 · 고대비 미니멀</option>
+              </select>
             </div>
 
             <div class="form-field" style="margin-bottom:0;">
@@ -90,6 +90,16 @@
             </div>
 
             <div class="form-field" style="margin-bottom:0;">
+              <label for="profScale">기본 아바타 크기 (%)</label>
+              <input type="number" id="profScale" class="form-input" min="75" max="135" value="100" />
+            </div>
+
+            <div class="form-field" style="margin-bottom:0;">
+              <label for="profOpacity">기본 배경 투명도 (%)</label>
+              <input type="number" id="profOpacity" class="form-input" min="50" max="100" value="95" />
+            </div>
+
+            <div class="form-field" style="margin-bottom:0; grid-column: 1 / -1;">
               <label for="profSpeed">기본 수어 싱크 속도 (배속)</label>
               <select id="profSpeed" class="form-select">
                 <option value="0.8">0.8x (느리게)</option>
