@@ -1,6 +1,6 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (자연스러운 인체 비율 아바타 + 표정/손동작) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127: 아바타·배경 불투명도 분리 제어) */
 (function () {
-  const PREFS_KEY = 'moa_pip_prefs_v1';
+  const PREFS_KEY = 'moa_pip_prefs_v2';
   const SUB_KEY = 'moa_pass_subscribed';
   const PROFILE_KEY = 'moa_user_profile_v1';
   const POSTS_KEY = 'moa_community_posts_v1';
@@ -61,6 +61,7 @@
     character: 'moa',
     scale: 100,
     opacity: 95,
+    bgOpacity: 75,
     position: 'bottom-right',
     speed: 1.0
   };
@@ -93,7 +94,7 @@
     });
   }
 
-  /* 자연스러운 인체 비례의 휴먼 수어 아바타 SVG */
+  /* 디테일한 인체 비례 + 표정 변화 + 일체형 미튼 핸드 수어 아바타 SVG */
   function buildRealisticAvatarSVG(charKey, mood) {
     const c = AVATAR_META[charKey] || AVATAR_META.moa;
     const m = mood || 'smile';
@@ -111,7 +112,7 @@
         : 'M 107 35 Q 113 33 119 36';
 
     const mouthPath = m === 'emphasis'
-      ? '<ellipse cx="100" cy="60" rx="5" ry="3.5" fill="#9f4a54"/><path d="M 95.8 59 Q 100 57.5 104.2 59" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
+      ? '<ellipse cx="100" cy="60" rx="4.8" ry="3.4" fill="#9f4a54"/><path d="M 96 59 Q 100 57.6 104 59" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
       : m === 'focus'
         ? '<path d="M 94 59.5 Q 100 60.5 106 59.5" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
         : '<path d="M 93.5 58.5 Q 100 64 106.5 58.5" stroke="#b45362" stroke-width="2.1" stroke-linecap="round" fill="none"/><path d="M 95.5 59.3 Q 100 62 104.5 59.3" fill="#ffffff" opacity="0.8"/>';
@@ -129,11 +130,11 @@
         : `<path d="M 76 44 C 74 22 88 16 100 16 C 112 16 126 22 124 44 C 121 30 112 27 103 30 C 95 33 85 29 76 44 Z" fill="${c.hair}"/>`;
 
     const shoulderPath = c.hairStyle === 'short'
-      ? 'M 42 152 C 44 106 60 85 83 82 L 117 82 C 140 85 156 106 158 152 Z'
-      : 'M 48 152 C 50 108 64 87 85 83 L 115 83 C 136 87 150 108 152 152 Z';
+      ? 'M 42 154 C 44 106 60 85 83 82 L 117 82 C 140 85 156 106 158 154 Z'
+      : 'M 48 154 C 50 108 64 87 85 83 L 115 83 C 136 87 150 108 152 154 Z';
 
     return `
-      <svg class="human-avatar-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <svg class="human-avatar-svg" viewBox="0 0 200 162" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
           <linearGradient id="skinGrad_${charKey}" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="${c.skin}"/>
@@ -148,11 +149,14 @@
         <!-- 뒷머리 레이어 -->
         ${hairBackSvg}
 
-        <!-- 상반신 & 짧은 자연스러운 목 -->
+        <!-- 상반신 & 의상 디테일 -->
         <g class="av-torso-group">
-          <path d="${shoulderPath}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-          <path d="M 85 83 L 100 104 L 115 83 L 108 82 L 100 94 L 92 82 Z" fill="${c.outfitAccent}" opacity="0.92"/>
-          <!-- 목 (인체 비례에 맞춘 컴팩트한 길이) -->
+          <path d="${shoulderPath}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.16)" stroke-width="1.2"/>
+          <!-- 자켓 라펠 & 이너 V넥 -->
+          <path d="M 85 83 L 100 106 L 115 83 L 108 82 L 100 95 L 92 82 Z" fill="${c.outfitAccent}" opacity="0.92"/>
+          <path d="M 79 84 L 94 114 L 100 106 L 86 83 Z" fill="rgba(255,255,255,0.08)"/>
+          <path d="M 121 84 L 106 114 L 100 106 L 114 83 Z" fill="rgba(255,255,255,0.08)"/>
+          <!-- 목 & 음영 -->
           <path d="M 91.5 68 L 91.5 85 Q 100 91 108.5 85 L 108.5 68 Z" fill="url(#skinGrad_${charKey})"/>
           <path d="M 91.5 69 Q 100 74.5 108.5 69 L 108.5 75 Q 100 79 91.5 75 Z" fill="${c.skinShadow}" opacity="0.5"/>
         </g>
@@ -185,55 +189,34 @@
           ${hairFrontSvg}
         </g>
 
-        <!-- 왼팔 & 5지 수어 손 (어깨에서 자연스럽게 이어지고 어두운 배경에서도 윤곽이 선명한 구조) -->
+        <!-- 왼팔 & 일체형 수어 핸드 -->
         <g class="av-arm-left">
-          <path d="M 56 96 C 48 114 50 132 58 148 L 73 148 C 67 132 67 118 72 108 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+          <path d="M 55 96 C 47 115 49 135 57 154 L 74 154 C 68 136 68 121 73 111 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
+          <path d="M 58 113 L 72 110 L 73 114 L 58 117 Z" fill="${c.outfitAccent}" opacity="0.85"/>
           <g class="av-hand-left">
-            <!-- 손목 연결부 -->
-            <rect x="61" y="114" width="11" height="10" rx="4" fill="${c.skinShadow}"/>
-            <!-- 손바닥 -->
-            <rect x="57" y="103" width="16.5" height="17" rx="7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="1"/>
-            <!-- 5개 손가락 -->
-            <g class="av-fingers-active">
-              <rect x="71" y="109" width="8.5" height="3.8" rx="1.9" transform="rotate(-22 71 109)" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="57.5" y="92" width="3.3" height="13" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="61.4" y="90" width="3.4" height="15" rx="1.7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="65.4" y="92" width="3.3" height="13.5" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="69.2" y="95" width="3.0" height="11" rx="1.5" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-            </g>
+            <path d="M 59 114 L 59 102 C 59 95 72 95 72 102 L 72 106 C 75.5 104 79 106.5 78 110 C 77 113 73.5 114.5 71 115 L 70 119 L 60 119 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1.1" stroke-linejoin="round"/>
+            <path d="M 63.5 98 L 63.5 105 M 67.5 98 L 67.5 105" stroke="${c.skinShadow}" stroke-width="0.9" stroke-linecap="round" opacity="0.65"/>
           </g>
         </g>
 
-        <!-- 오른팔 & 5지 수어 손 -->
+        <!-- 오른팔 & 일체형 수어 핸드 -->
         <g class="av-arm-right">
-          <path d="M 144 96 C 152 114 150 132 142 148 L 127 148 C 133 132 133 118 128 108 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
+          <path d="M 145 96 C 153 115 151 135 143 154 L 126 154 C 132 136 132 121 127 111 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
+          <path d="M 142 110 L 128 107 L 127 111 L 142 114 Z" fill="${c.outfitAccent}" opacity="0.85"/>
           <g class="av-hand-right">
-            <!-- 손목 연결부 -->
-            <rect x="128" y="111" width="11" height="10" rx="4" fill="${c.skinShadow}"/>
-            <!-- 손바닥 -->
-            <rect x="126.5" y="100" width="16.5" height="17" rx="7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="1"/>
-            <!-- 5개 손가락 -->
-            <g class="av-fingers-active">
-              <rect x="120.5" y="106" width="8.5" height="3.8" rx="1.9" transform="rotate(22 129 106)" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="127.8" y="92" width="3.0" height="11" rx="1.5" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="131.3" y="89" width="3.3" height="13.5" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="135.2" y="87" width="3.4" height="15" rx="1.7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-              <rect x="139.2" y="89" width="3.3" height="13" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
-            </g>
+            <path d="M 141 111 L 141 99 C 141 92 128 92 128 99 L 128 103 C 124.5 101 121 103.5 122 107 C 123 110 126.5 111.5 129 112 L 130 116 L 140 116 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1.1" stroke-linejoin="round"/>
+            <path d="M 136.5 95 L 136.5 102 M 132.5 95 L 132.5 102" stroke="${c.skinShadow}" stroke-width="0.9" stroke-linecap="round" opacity="0.65"/>
           </g>
         </g>
       </svg>
     `;
   }
 
-  function applyAvatarCharacterTheme(pipEl, charKey, labelEl, mood) {
+  function applyAvatarCharacterTheme(pipEl, charKey, mood) {
     if (!pipEl) return;
     const key = AVATAR_META[charKey] ? charKey : 'moa';
     pipEl.classList.remove('char-moa', 'char-seoyeon', 'char-dohyun', 'char-nova');
     pipEl.classList.add(`char-${key}`);
-    if (labelEl) {
-      labelEl.textContent = `KSL · ${AVATAR_META[key].name}`;
-    }
     const fig = pipEl.querySelector('.avatar-figure');
     if (fig) {
       fig.innerHTML = buildRealisticAvatarSVG(key, mood || 'smile');
@@ -248,9 +231,12 @@
 
     const prefs = getPrefs();
     const heroPip = document.querySelector('#ottHeroSection .pip-widget');
-    const heroPipLabel = document.querySelector('#ottHeroSection .pip-label span:first-child');
     if (heroPip) {
-      applyAvatarCharacterTheme(heroPip, prefs.character, heroPipLabel, 'smile');
+      const bgAlpha = (prefs.bgOpacity !== undefined ? prefs.bgOpacity : 75) / 100;
+      const avAlpha = (prefs.opacity !== undefined ? prefs.opacity : 95) / 100;
+      heroPip.style.setProperty('--pip-bg-alpha', String(bgAlpha));
+      heroPip.style.setProperty('--pip-avatar-alpha', String(avAlpha));
+      applyAvatarCharacterTheme(heroPip, prefs.character, 'smile');
     }
 
     const allContents = (window.MOA_DATA && Array.isArray(window.MOA_DATA.contents))
@@ -263,7 +249,6 @@
     const heroTitle = document.getElementById('heroTitle');
     const heroDesc = document.getElementById('heroDesc');
     const heroWatchBtn = document.getElementById('heroWatchBtn');
-    const heroSignGloss = document.getElementById('heroSignGloss');
     const heroDots = document.getElementById('heroDots');
 
     let slideIdx = 0;
@@ -277,7 +262,6 @@
       if (heroGenre) heroGenre.textContent = `${item.genre} · ${item.year}`;
       if (heroTitle) heroTitle.textContent = item.title;
       if (heroDesc) heroDesc.textContent = item.summary;
-      if (heroSignGloss) heroSignGloss.textContent = item.signGloss || '[수어] 실시간 통역 지원';
 
       if (heroWatchBtn) {
         heroWatchBtn.textContent = '바로가기';
@@ -391,7 +375,7 @@
     renderGrid();
   }
 
-  /* 2. PIP 플레이어 (player.html) — 표정·손동작 실시간 싱크 + 영상 폴백 */
+  /* 2. PIP 플레이어 (player.html) — 아바타 & 배경 불투명도 독립 제어 */
   function initPlayer() {
     const root = document.getElementById('playerPageRoot');
     if (!root) return;
@@ -412,16 +396,17 @@
     const timeText = document.getElementById('videoTimeText');
     const dialogueEl = document.getElementById('playerDialogue');
     const glossEl = document.getElementById('playerGloss');
-    const pipActionEl = document.getElementById('pipActionLabel');
 
     if (titleEl) titleEl.textContent = item.title;
     if (metaEl) metaEl.textContent = `${item.platform} · ${item.genre}`;
     if (summaryEl) summaryEl.textContent = item.summary;
 
     const prefs = getPrefs();
+    if (prefs.bgOpacity === undefined) prefs.bgOpacity = 75;
+    if (prefs.opacity === undefined) prefs.opacity = 95;
     let currentMood = 'smile';
+
     const pipBox = document.getElementById('liveDemoPip');
-    const pipCharLabel = document.getElementById('demoPipCharName');
     const pipToggle = document.getElementById('demoPipToggle');
     const charBtns = document.querySelectorAll('.char-btn[data-char]');
     const charActiveText = document.getElementById('demoCharActiveLabel');
@@ -429,9 +414,10 @@
     const scaleLabel = document.getElementById('demoScaleLabel');
     const opacityRange = document.getElementById('demoOpacityRange');
     const opacityLabel = document.getElementById('demoOpacityLabel');
+    const bgOpacityRange = document.getElementById('demoBgOpacityRange');
+    const bgOpacityLabel = document.getElementById('demoBgOpacityLabel');
     const speedRange = document.getElementById('demoSpeedRange');
     const speedLabel = document.getElementById('demoSpeedLabel');
-    const speedBadge = document.getElementById('demoPipSpeedBadge');
     const posBtns = document.querySelectorAll('.pos-btn[data-pos]');
     const saveBtn = document.getElementById('demoSavePrefsBtn');
     const saveStatus = document.getElementById('demoSaveStatus');
@@ -442,10 +428,11 @@
       pipBox.classList.remove('pos-top-left', 'pos-top-right', 'pos-bottom-left', 'pos-bottom-right');
       pipBox.classList.add(`pos-${prefs.position}`);
       pipBox.style.transform = `scale(${prefs.scale / 100})`;
-      pipBox.style.opacity = prefs.enabled ? String(prefs.opacity / 100) : '0';
+      pipBox.style.setProperty('--pip-avatar-alpha', String((prefs.opacity ?? 95) / 100));
+      pipBox.style.setProperty('--pip-bg-alpha', String((prefs.bgOpacity ?? 75) / 100));
 
       if (forceRebuildAvatar) {
-        applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel, currentMood);
+        applyAvatarCharacterTheme(pipBox, prefs.character, currentMood);
       }
 
       const meta = AVATAR_META[prefs.character] || AVATAR_META.moa;
@@ -460,11 +447,12 @@
       }
       if (scaleRange) scaleRange.value = String(prefs.scale);
       if (scaleLabel) scaleLabel.textContent = `${prefs.scale}%`;
-      if (opacityRange) opacityRange.value = String(prefs.opacity);
-      if (opacityLabel) opacityLabel.textContent = `${prefs.opacity}%`;
+      if (opacityRange) opacityRange.value = String(prefs.opacity ?? 95);
+      if (opacityLabel) opacityLabel.textContent = `${prefs.opacity ?? 95}%`;
+      if (bgOpacityRange) bgOpacityRange.value = String(prefs.bgOpacity ?? 75);
+      if (bgOpacityLabel) bgOpacityLabel.textContent = `${prefs.bgOpacity ?? 75}%`;
       if (speedRange) speedRange.value = String(prefs.speed);
       if (speedLabel) speedLabel.textContent = `${Number(prefs.speed).toFixed(1)}x`;
-      if (speedBadge) speedBadge.textContent = `${Number(prefs.speed).toFixed(1)}x`;
       if (videoEl) {
         try { videoEl.playbackRate = Number(prefs.speed) || 1.0; } catch (e) {}
       }
@@ -495,6 +483,12 @@
     if (opacityRange) {
       opacityRange.addEventListener('input', (e) => {
         prefs.opacity = Number(e.target.value);
+        applyPipStyles(false);
+      });
+    }
+    if (bgOpacityRange) {
+      bgOpacityRange.addEventListener('input', (e) => {
+        prefs.bgOpacity = Number(e.target.value);
         applyPipStyles(false);
       });
     }
@@ -544,13 +538,12 @@
       const nextMood = moods[cueIndex % moods.length];
       if (nextMood !== currentMood) {
         currentMood = nextMood;
-        applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel, currentMood);
+        applyAvatarCharacterTheme(pipBox, prefs.character, currentMood);
       }
 
       if (activeCue) {
         if (dialogueEl) dialogueEl.textContent = activeCue.dialogue;
         if (glossEl) glossEl.textContent = activeCue.gloss;
-        if (pipActionEl) pipActionEl.textContent = activeCue.action;
       }
     }
 
@@ -821,14 +814,14 @@
           }));
         } catch (err) {}
 
-        savePrefs({
+        savePrefs(Object.assign({}, prefs, {
           enabled: true,
           character: (charInput ? charInput.value : 'moa') || 'moa',
           scale: Number(scaleInput ? scaleInput.value : 100) || 100,
           opacity: Number(opacityInput ? opacityInput.value : 95) || 95,
           position: (posInput ? posInput.value : 'bottom-right') || 'bottom-right',
           speed: Number(speedInput ? speedInput.value : 1.0) || 1.0
-        });
+        }));
 
         if (msg) msg.textContent = '✓ 프로필과 기본 수어 캐릭터·PIP 설정이 저장되었습니다.';
       });
