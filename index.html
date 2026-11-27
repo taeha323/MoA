@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoA — 모두를 위한 AI 수어 OTT 오버레이 서비스</title>
+  <title>MoA — AI 수어 통역 OTT 큐레이션 & 학습 플랫폼</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -11,338 +11,102 @@
   <!-- 상단 내비게이션 -->
   <header class="site-header">
     <div class="header-inner">
-      <a href="index.html" class="logo" aria-label="MoA 홈으로 이동">
+      <a href="index.html" class="logo" aria-label="MoA 홈">
         <span class="logo-mark">MoA</span>
         <span>MoA</span>
       </a>
 
       <nav class="nav-links" aria-label="주요 메뉴">
-        <a href="#about">서비스 소개</a>
-        <a href="#features">핵심 기능</a>
-        <a href="#how-it-works">이용 방법</a>
-        <a href="#live-demo">실시간 체험</a>
-        <a href="contents.html">콘텐츠 탐색</a>
+        <a href="index.html" class="active">콘텐츠 탐색</a>
+        <a href="player.html?id=1&mode=learn">수어 학습 모드</a>
+        <a href="community.html">소통 커뮤니티</a>
+        <a href="about.html">서비스 소개</a>
       </nav>
 
       <div class="header-cta">
-        <span class="demo-tag">BETA DEMO</span>
-        <a href="player.html?id=1" class="btn btn-primary btn-sm">서비스 체험하기</a>
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어 열기</a>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- SECTION 01. HERO -->
-    <section class="hero-section">
-      <div class="container hero-grid">
-        <div class="reveal">
-          <div class="eyebrow">AI SIGN LANGUAGE OTT ACCESSIBILITY</div>
-          <h1 class="hero-headline">
-            소리가 멈춘 화면 위,<br />
-            <span class="accent-text">가장 생생한 언어</span>를 더하다
-          </h1>
-          <p class="hero-subcopy">
-            기존 OTT 영상은 그대로 유지한 채, AI 수어 아바타가 실시간 PIP(Picture-in-Picture)로 대사의 감정과 호흡까지 전달합니다.
-          </p>
-          <div class="hero-buttons">
-            <a href="#live-demo" class="btn btn-primary">서비스 체험하기</a>
-            <a href="#about" class="btn btn-secondary">MoA 알아보기</a>
+    <!-- 4초 간격 자동 롤링 메인 히어로 배너 -->
+    <section class="ott-hero" id="ottHeroSection" aria-label="추천 수어 지원 콘텐츠">
+      <div class="ott-hero-bg" id="heroBg"></div>
+      <div class="ott-hero-overlay"></div>
+
+      <div class="container ott-hero-inner">
+        <div class="ott-hero-content">
+          <div class="ott-hero-meta">
+            <span class="platform-chip" id="heroPlatform">Netflix</span>
+            <span class="genre-chip" id="heroGenre">판타지 · 스릴러</span>
           </div>
+          <h1 class="ott-hero-title" id="heroTitle">하이쿠키 (High Cookie)</h1>
+          <p class="ott-hero-desc" id="heroDesc"></p>
+
+          <div class="ott-hero-actions">
+            <a href="player.html?id=1" id="heroWatchBtn" class="btn btn-primary">▶ AI 수어 PIP로 감상하기</a>
+            <a href="player.html?id=1&mode=learn" id="heroLearnBtn" class="btn btn-secondary">수어 표현 배우기</a>
+          </div>
+
+          <div class="hero-dots" id="heroDots"></div>
         </div>
 
-        <div class="hero-cinema-card reveal">
-          <div class="cinema-viewport">
-            <div class="cinema-top-meta">
-              <span>시연용 샘플 화면 · Netflix 연동 예시</span>
-              <span class="badge-live">● AI 수어 PIP 활성</span>
-            </div>
-            <div class="cinema-subtitle">
-              “지금 이 쿠키를 한 입 베어 무는 순간, 모든 게 달라질 거야.”
+        <!-- 우측 실시간 아바타 PIP 미리보기 -->
+        <div class="pip-widget" aria-label="수어 아바타 미리보기">
+          <div class="pip-label"><span>MoA 수어 PIP</span><span>LIVE</span></div>
+          <div class="avatar-figure">
+            <div class="avatar-silhouette">
+              <div class="av-head"></div>
+              <div class="av-body"></div>
+              <div class="av-hand left"></div>
+              <div class="av-hand right"></div>
             </div>
           </div>
-          <div class="pip-widget" aria-label="수어 아바타 PIP 미리보기">
-            <div class="pip-label"><span>MoA 아바타</span><span>1.0x</span></div>
-            <div class="avatar-figure">
-              <div class="avatar-silhouette">
-                <div class="av-head"></div>
-                <div class="av-body"></div>
-                <div class="av-hand left"></div>
-                <div class="av-hand right"></div>
-              </div>
-            </div>
-            <div class="pip-gloss">[수어] 지금 · 선택 · 변화</div>
-          </div>
+          <div class="pip-gloss" id="heroSignGloss">[수어] 지금 · 선택 · 변화</div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 02. ABOUT MoA -->
-    <section id="about" class="section">
+    <!-- 콘텐츠 탐색 섹션 -->
+    <section class="section">
       <div class="container">
-        <div class="section-header reveal">
-          <div class="eyebrow">ABOUT MoA</div>
-          <h2 class="section-title">자막만으로는 다 담기지 않던<br />영상의 온도와 감정까지</h2>
-          <p class="section-desc">
-            농인 시청자에게 한국어 텍스트 자막은 제2언어입니다. MoA는 원본 영상을 훼손하거나 재송출하지 않고, 공식 OTT 위에 맞춤형 AI 수어 아바타를 겹쳐 새로운 시청 경험을 만듭니다.
-          </p>
+        <div class="showcase-toolbar">
+          <div class="filter-group">
+            <button type="button" class="filter-chip active" data-platform="ALL">전체</button>
+            <button type="button" class="filter-chip" data-platform="Netflix">Netflix</button>
+            <button type="button" class="filter-chip" data-platform="TVING">TVING</button>
+            <button type="button" class="filter-chip" data-platform="Wavve">Wavve</button>
+            <button type="button" class="filter-chip" data-platform="Disney+">Disney+</button>
+          </div>
+
+          <input
+            type="search"
+            id="catalogSearchInput"
+            class="search-box"
+            placeholder="작품명 또는 장르 검색..."
+            aria-label="작품명 또는 장르 검색"
+          />
         </div>
 
-        <div class="about-grid">
-          <div class="about-card reveal">
-            <span class="about-tag">기존 시청 환경의 한계</span>
-            <h3>제한된 수어 지원작과 고정된 화면 배치</h3>
-            <p>
-              일부 콘텐츠에만 제공되는 기존 수어 방송은 통역사 위치와 크기가 고정되어 영상의 주요 장면을 가리거나 감정 전달이 단조로웠습니다.
-            </p>
-            <div class="about-visual-bar">
-              <span>텍스트 자막 중심 시청</span>
-              <span>화자 구분 · 어조 전달 한계</span>
+        <div class="poster-grid" id="catalogPageGrid"></div>
+
+        <!-- 절제된 네이티브 스폰서 배너 (광고 영역) -->
+        <aside class="sponsor-banner" aria-label="제휴 및 배리어프리 캠페인 안내">
+          <div class="sponsor-left">
+            <span class="ad-badge">PARTNER</span>
+            <div class="sponsor-text">
+              <h4>2026 배리어프리 미디어 패스 · 청각장애인 및 수어 학습자 구독 지원 캠페인</h4>
+              <p>제휴 OTT 이용권과 MoA AI 수어 아바타 학습 패키지를 함께 만나보세요.</p>
             </div>
           </div>
-
-          <div class="about-card highlight reveal">
-            <span class="about-tag">MoA의 새로운 시청 방식</span>
-            <h3>원본 OTT + 자유롭게 조절하는 수어 PIP</h3>
-            <p>
-              사용자가 구독 중인 공식 OTT 플레이어 위에 반투명 PIP 아바타를 띄워, 원하는 위치와 크기로 조율하며 작품에 온전히 몰입할 수 있습니다.
-            </p>
-            <div class="about-visual-bar">
-              <span>비파괴 타임코드 동기화</span>
-              <span style="color:var(--accent-lavender);">크기 · 위치 · 싱크 맞춤형 제어</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 03. CORE FEATURES -->
-    <section id="features" class="section section-navy">
-      <div class="container">
-        <div class="section-header reveal">
-          <div class="eyebrow">CORE FEATURES</div>
-          <h2 class="section-title">시청자를 방해하지 않고<br />완벽히 어우러지는 4가지 핵심 기술</h2>
-        </div>
-
-        <div class="features-grid">
-          <div class="feature-block reveal">
-            <div>
-              <h3>수어 아바타 PIP (Picture-in-Picture)</h3>
-              <p>공식 OTT 영상을 복제하지 않고 독립된 플로팅 레이어로 수어 아바타를 재생하여 저작권 문제 없이 모든 플랫폼과 함께 동작합니다.</p>
-            </div>
-            <div class="feature-mini-ui">
-              <div style="display:flex; justify-content:space-between; color:var(--accent-lavender);">
-                <span>● 독립 플로팅 오버레이 엔진</span>
-                <span>활성 상태</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="feature-block reveal">
-            <div>
-              <h3>아바타 크기 조절</h3>
-              <p>모바일의 작은 화면부터 데스크톱 대화면까지, 시청 거리와 시력에 맞춰 75%에서 135%까지 아바타 비율을 자유롭게 확대·축소합니다.</p>
-            </div>
-            <div class="feature-mini-ui">
-              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                <span>스케일 프리셋</span>
-                <span style="color:var(--accent-lavender);">75% — 100% — 135%</span>
-              </div>
-              <div style="height:6px; background:#1e293b; border-radius:999px; overflow:hidden;">
-                <div style="width:65%; height:100%; background:var(--accent-gradient);"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="feature-block reveal">
-            <div>
-              <h3>아바타 위치 조절</h3>
-              <p>하단 자막이나 인물의 얼굴을 가리지 않도록 화면 네 모서리(우하단·좌하단·우상단·좌상단)로 아바타 위치를 즉시 이동할 수 있습니다.</p>
-            </div>
-            <div class="feature-mini-ui">
-              <div class="mini-corner-grid">
-                <span class="mini-corner-btn">좌상단</span>
-                <span class="mini-corner-btn">우상단</span>
-                <span class="mini-corner-btn">좌하단</span>
-                <span class="mini-corner-btn active">우하단</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="feature-block reveal">
-            <div>
-              <h3>영상과 수어의 싱크 조절</h3>
-              <p>대사 속도가 빠른 액션물이나 네트워크 지연 환경에서도 0.8x~1.4x 속도 및 타임코드 미세 조정을 통해 영상과 수어 호흡을 일치시킵니다.</p>
-            </div>
-            <div class="feature-mini-ui">
-              <div style="display:flex; justify-content:space-between; color:#93c5fd;">
-                <span>타임코드 동기화 정밀도</span>
-                <span>0.8x ~ 1.4x 가변 싱크</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 04. HOW IT WORKS -->
-    <section id="how-it-works" class="section">
-      <div class="container">
-        <div class="section-header centered reveal">
-          <div class="eyebrow">HOW IT WORKS</div>
-          <h2 class="section-title">단 세 단계로 시작하는 수어 OTT 감상</h2>
-          <p class="section-desc">복잡한 설치 과정 없이 원하는 작품을 고르고 아바타를 켜기만 하면 됩니다.</p>
-        </div>
-
-        <div class="steps-row">
-          <div class="step-item reveal">
-            <div class="step-index">STEP 01</div>
-            <h3>원하는 콘텐츠 선택</h3>
-            <p>MoA 콘텐츠 쇼케이스에서 AI 수어 트랙이 준비된 영화나 드라마를 선택합니다.</p>
-          </div>
-          <div class="step-item reveal">
-            <div class="step-index">STEP 02</div>
-            <h3>수어 아바타 활성화</h3>
-            <p>플레이어에서 수어 아바타 PIP를 켜고 공식 OTT 재생 화면과 동기화합니다.</p>
-          </div>
-          <div class="step-item reveal">
-            <div class="step-index">STEP 03</div>
-            <h3>크기와 위치를 조절하며 감상</h3>
-            <p>장면 구도에 맞춰 아바타의 위치·크기·속도를 조율하며 몰입감 있게 감상합니다.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 05. LIVE DEMO -->
-    <section id="live-demo" class="section section-navy">
-      <div class="container">
-        <div class="section-header reveal">
-          <div class="eyebrow">INTERACTIVE LIVE DEMO</div>
-          <h2 class="section-title">직접 조작해 보는 MoA 수어 PIP 데모</h2>
-          <p class="section-desc">
-            우측 컨트롤 패널에서 아바타를 켜고 끄거나, 크기·모서리 위치·통역 속도를 직접 조절해 보세요. (시연용 인터랙티브 화면)
-          </p>
-        </div>
-
-        <div class="demo-workspace reveal">
-          <!-- 시뮬레이션 비디오 + PIP -->
-          <div class="demo-player-screen">
-            <div class="demo-screen-header">
-              <span style="color:#cbd5e1;">시연 샘플 · 무빙 (Moving) EP.01</span>
-              <span class="badge-live">PIP 오버레이 시뮬레이터</span>
-            </div>
-
-            <div class="demo-caption-bar">
-              <p>“능력이 중요한 게 아니야. 누굴 지키느냐가 중요한 거지.”</p>
-              <span>[수어 변환] 능력 · 중요 아니다 · 누구 · 지키다 · 중요하다</span>
-            </div>
-
-            <div class="pip-widget demo-pip pos-bottom-right" id="liveDemoPip">
-              <div class="pip-label">
-                <span>MoA PIP</span>
-                <span id="demoPipSpeedBadge">1.0x</span>
-              </div>
-              <div class="avatar-figure">
-                <div class="avatar-silhouette">
-                  <div class="av-head"></div>
-                  <div class="av-body"></div>
-                  <div class="av-hand left"></div>
-                  <div class="av-hand right"></div>
-                </div>
-              </div>
-              <div class="pip-gloss">실시간 수어 모션 활성</div>
-            </div>
-          </div>
-
-          <!-- 실시간 컨트롤 패널 -->
-          <div class="demo-control-panel">
-            <div>
-              <div class="control-group">
-                <div class="control-row">
-                  <strong>수어 아바타 표시</strong>
-                  <button type="button" class="toggle-switch" id="demoPipToggle">아바타 ON</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="control-row">
-                  <label for="demoScaleRange">아바타 크기 조절</label>
-                  <strong id="demoScaleLabel">100%</strong>
-                </div>
-                <input type="range" id="demoScaleRange" min="75" max="135" value="100" />
-              </div>
-
-              <div class="control-group">
-                <div class="control-row">
-                  <span>아바타 화면 위치</span>
-                </div>
-                <div class="pos-selector">
-                  <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
-                  <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
-                  <button type="button" class="pos-btn" data-pos="bottom-left">좌측 하단</button>
-                  <button type="button" class="pos-btn active" data-pos="bottom-right">우측 하단</button>
-                </div>
-              </div>
-
-              <div class="control-group">
-                <div class="control-row">
-                  <label for="demoSpeedRange">영상 · 수어 싱크 속도</label>
-                  <strong id="demoSpeedLabel">1.0x</strong>
-                </div>
-                <input type="range" id="demoSpeedRange" min="0.8" max="1.4" step="0.1" value="1.0" />
-              </div>
-            </div>
-
-            <div>
-              <button type="button" class="btn btn-primary" style="width:100%;" id="demoSavePrefsBtn">
-                현재 PIP 설정 저장하기
-              </button>
-              <p id="demoSaveStatus" style="font-size:12px; color:var(--accent-lavender); margin-top:10px; min-height:18px;"></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 06. CONTENTS SHOWCASE -->
-    <section id="contents" class="section">
-      <div class="container">
-        <div class="showcase-toolbar reveal">
-          <div>
-            <div class="eyebrow">CONTENTS SHOWCASE</div>
-            <h2 class="section-title">수어 지원 콘텐츠 큐레이션</h2>
-          </div>
-          <a href="contents.html" class="btn btn-secondary btn-sm">전체 콘텐츠 보기 →</a>
-        </div>
-
-        <div class="filter-group reveal" style="margin-bottom:28px;">
-          <button type="button" class="filter-chip active" data-platform="ALL">전체</button>
-          <button type="button" class="filter-chip" data-platform="Netflix">Netflix</button>
-          <button type="button" class="filter-chip" data-platform="TVING">TVING</button>
-          <button type="button" class="filter-chip" data-platform="Wavve">Wavve</button>
-          <button type="button" class="filter-chip" data-platform="Disney+">Disney+</button>
-        </div>
-
-        <div class="poster-grid reveal" id="landingShowcaseGrid"></div>
-      </div>
-    </section>
-
-    <!-- SECTION 07. BRAND STORY -->
-    <section class="brand-story-section section-navy">
-      <div class="container reveal">
-        <div class="eyebrow">OUR PHILOSOPHY</div>
-        <blockquote class="brand-quote">
-          “콘텐츠를 즐기는 방식은 달라도,<br />
-          즐길 권리는 모두에게 있습니다.”
-        </blockquote>
-        <p class="brand-story-sub">
-          MoA는 기술이 장벽을 허무는 가장 따뜻한 도구가 될 수 있다고 믿습니다. 모든 이야기가 누구에게나 온전히 닿는 그날까지, 감상 경험의 기준을 새롭게 설계합니다.
-        </p>
+          <a href="about.html#live-demo" class="btn btn-secondary btn-sm">자세히 보기</a>
+        </aside>
       </div>
     </section>
   </main>
 
-  <!-- SECTION 08. FOOTER -->
+  <!-- 푸터 -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -352,33 +116,33 @@
             <span>MoA</span>
           </div>
           <p style="max-width:340px;">
-            공식 OTT 영상 위에 실시간 AI 수어 아바타를 더하는 비파괴 콘텐츠 접근성 서비스입니다.
+            공식 OTT 영상 위에 실시간 AI 수어 아바타를 더하고, 수어 학습과 소통까지 이어주는 콘텐츠 접근성 플랫폼입니다.
           </p>
         </div>
 
         <div class="footer-col">
-          <h4>서비스 메뉴</h4>
+          <h4>서비스</h4>
           <ul>
-            <li><a href="#about">서비스 소개</a></li>
-            <li><a href="contents.html">콘텐츠 탐색</a></li>
-            <li><a href="player.html?id=1">PIP 플레이어 체험</a></li>
-            <li><a href="admin.html">관리자 대시보드</a></li>
+            <li><a href="index.html">콘텐츠 탐색</a></li>
+            <li><a href="player.html?id=1&mode=learn">수어 학습 모드</a></li>
+            <li><a href="community.html">농인 · 학습자 커뮤니티</a></li>
+            <li><a href="about.html">서비스 소개</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h4>안내 및 정책</h4>
+          <h4>안내 및 운영</h4>
           <ul>
-            <li><span>문의 및 제휴 안내 (베타 준비 중)</span></li>
-            <li><span>이용약관 (시연용 서비스 기준)</span></li>
-            <li><span>개인정보 처리방침 (준비 중)</span></li>
+            <li><a href="admin.html">관리자 대시보드</a></li>
+            <li><span>문의 및 제휴 안내 (준비 중)</span></li>
+            <li><span>이용약관 · 개인정보 처리방침 (시연용 기준)</span></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <span>© 2026 MoA Project. 본 웹사이트는 서비스 시연용 데모 화면 및 샘플 데이터를 포함하고 있습니다.</span>
-        <span>AI Data-Driven Service Design</span>
+        <span>© 2026 MoA. 콘텐츠 포스터 및 트랙 일부는 시연용 샘플 데이터를 포함하고 있습니다.</span>
+        <span>All Rights Reserved.</span>
       </div>
     </div>
   </footer>
