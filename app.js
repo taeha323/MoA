@@ -1,4 +1,4 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (리얼 휴먼 아바타 표정·5지 관절 동기화) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (자연스러운 인체 비율 아바타 + 표정/손동작) */
 (function () {
   const PREFS_KEY = 'moa_pip_prefs_v1';
   const SUB_KEY = 'moa_pass_subscribed';
@@ -28,7 +28,7 @@
       hairStyle: 'long',
       outfit: '#9d3b66',
       outfitAccent: '#f472b6',
-      blush: 'rgba(251, 113, 133, 0.32)'
+      blush: 'rgba(251, 113, 133, 0.30)'
     },
     dohyun: {
       name: '도현',
@@ -93,43 +93,44 @@
     });
   }
 
-  /* 리얼 휴먼 수어 아바타 SVG 생성기 (표정 4종 + 5지 관절) */
+  /* 자연스러운 인체 비례의 휴먼 수어 아바타 SVG */
   function buildRealisticAvatarSVG(charKey, mood) {
     const c = AVATAR_META[charKey] || AVATAR_META.moa;
     const m = mood || 'smile';
 
     const browLeft = m === 'focus'
-      ? 'M 81 33 Q 87 35 93 34'
+      ? 'M 81 36 Q 87 38 93 37'
       : m === 'emphasis'
-        ? 'M 81 31 Q 87 28 93 32'
-        : 'M 81 33 Q 87 30 93 32';
+        ? 'M 81 34 Q 87 31 93 35'
+        : 'M 81 36 Q 87 33 93 35';
 
     const browRight = m === 'focus'
-      ? 'M 107 34 Q 113 35 119 33'
+      ? 'M 107 37 Q 113 38 119 36'
       : m === 'emphasis'
-        ? 'M 107 32 Q 113 28 119 31'
-        : 'M 107 32 Q 113 30 119 33';
+        ? 'M 107 35 Q 113 31 119 34'
+        : 'M 107 35 Q 113 33 119 36';
 
     const mouthPath = m === 'emphasis'
-      ? '<ellipse cx="100" cy="57" rx="5.2" ry="3.6" fill="#9f4a54"/><path d="M 95.5 56 Q 100 54.5 104.5 56" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
+      ? '<ellipse cx="100" cy="60" rx="5" ry="3.5" fill="#9f4a54"/><path d="M 95.8 59 Q 100 57.5 104.2 59" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
       : m === 'focus'
-        ? '<path d="M 94 56.5 Q 100 57.5 106 56.5" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
-        : '<path d="M 93 55.5 Q 100 61.5 107 55.5" stroke="#b45362" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M 95 56.5 Q 100 59.5 105 56.5" fill="#ffffff" opacity="0.75"/>';
+        ? '<path d="M 94 59.5 Q 100 60.5 106 59.5" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
+        : '<path d="M 93.5 58.5 Q 100 64 106.5 58.5" stroke="#b45362" stroke-width="2.1" stroke-linecap="round" fill="none"/><path d="M 95.5 59.3 Q 100 62 104.5 59.3" fill="#ffffff" opacity="0.8"/>';
 
     const hairBackSvg = c.hairStyle === 'long'
-      ? `<path d="M 70 36 C 66 64 68 92 76 104 L 124 104 C 132 92 134 64 130 36 Z" fill="${c.hairBack}"/>`
+      ? `<path d="M 71 38 C 66 64 68 88 75 96 L 125 96 C 132 88 134 64 129 38 Z" fill="${c.hairBack}"/>`
       : c.hairStyle === 'bob'
-        ? `<path d="M 73 36 C 70 56 72 72 78 78 L 122 78 C 128 72 130 56 127 36 Z" fill="${c.hairBack}"/>`
+        ? `<path d="M 73 38 C 70 55 72 68 78 74 L 122 74 C 128 68 130 55 127 38 Z" fill="${c.hairBack}"/>`
         : '';
 
     const hairFrontSvg = c.hairStyle === 'short'
-      ? `<path d="M 77 38 C 76 20 88 14 100 14 C 112 14 124 20 123 38 C 120 27 111 24 102 26 C 93 28 84 25 77 38 Z" fill="${c.hair}"/>`
+      ? `<path d="M 77 41 C 76 23 88 17 100 17 C 112 17 124 23 123 41 C 120 30 111 27 102 29 C 93 31 84 28 77 41 Z" fill="${c.hair}"/>`
       : c.hairStyle === 'sleek'
-        ? `<path d="M 77 39 C 76 18 89 13 100 13 C 111 13 124 18 123 39 C 118 24 106 22 100 22 C 94 22 82 24 77 39 Z" fill="${c.hair}"/>`
-        : `<path d="M 76 41 C 74 19 88 13 100 13 C 112 13 126 19 124 41 C 121 27 112 24 103 27 C 95 30 85 26 76 41 Z" fill="${c.hair}"/>`;
+        ? `<path d="M 77 42 C 76 21 89 16 100 16 C 111 16 124 21 123 42 C 118 27 106 25 100 25 C 94 25 82 27 77 42 Z" fill="${c.hair}"/>`
+        : `<path d="M 76 44 C 74 22 88 16 100 16 C 112 16 126 22 124 44 C 121 30 112 27 103 30 C 95 33 85 29 76 44 Z" fill="${c.hair}"/>`;
 
-    const shoulderWidth = c.hairStyle === 'short' ? 'M 46 150 C 48 112 64 96 84 93 L 116 93 C 136 96 152 112 154 150 Z'
-      : 'M 52 150 C 54 114 68 98 86 94 L 114 94 C 132 98 146 114 148 150 Z';
+    const shoulderPath = c.hairStyle === 'short'
+      ? 'M 42 152 C 44 106 60 85 83 82 L 117 82 C 140 85 156 106 158 152 Z'
+      : 'M 48 152 C 50 108 64 87 85 83 L 115 83 C 136 87 150 108 152 152 Z';
 
     return `
       <svg class="human-avatar-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -147,84 +148,77 @@
         <!-- 뒷머리 레이어 -->
         ${hairBackSvg}
 
-        <!-- 상반신 및 의상 -->
+        <!-- 상반신 & 짧은 자연스러운 목 -->
         <g class="av-torso-group">
-          <path d="${shoulderWidth}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-          <!-- V넥 / 카라 포인트 -->
-          <path d="M 85 94 L 100 116 L 115 94 L 108 93 L 100 106 L 92 93 Z" fill="${c.outfitAccent}" opacity="0.9"/>
-          <!-- 목 & 쇄골 음영 -->
-          <path d="M 91 66 L 91 95 Q 100 102 109 95 L 109 66 Z" fill="url(#skinGrad_${charKey})"/>
-          <path d="M 91 68 Q 100 74 109 68 L 109 75 Q 100 80 91 75 Z" fill="${c.skinShadow}" opacity="0.55"/>
+          <path d="${shoulderPath}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <path d="M 85 83 L 100 104 L 115 83 L 108 82 L 100 94 L 92 82 Z" fill="${c.outfitAccent}" opacity="0.92"/>
+          <!-- 목 (인체 비례에 맞춘 컴팩트한 길이) -->
+          <path d="M 91.5 68 L 91.5 85 Q 100 91 108.5 85 L 108.5 68 Z" fill="url(#skinGrad_${charKey})"/>
+          <path d="M 91.5 69 Q 100 74.5 108.5 69 L 108.5 75 Q 100 79 91.5 75 Z" fill="${c.skinShadow}" opacity="0.5"/>
         </g>
 
-        <!-- 얼굴 & 비수지 신호(표정) 레이어 -->
+        <!-- 얼굴 & 표정 -->
         <g class="av-head-group">
-          <!-- 양쪽 귀 -->
-          <ellipse cx="77" cy="44" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
-          <ellipse cx="123" cy="44" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
-          <!-- 얼굴 윤곽 -->
-          <path d="M 78 34 C 78 19 122 19 122 34 C 122 52 113 67 100 68 C 87 67 78 52 78 34 Z" fill="url(#skinGrad_${charKey})"/>
-          <!-- 볼 홍조 -->
-          <ellipse cx="85" cy="49" rx="5" ry="2.8" fill="${c.blush}"/>
-          <ellipse cx="115" cy="49" rx="5" ry="2.8" fill="${c.blush}"/>
+          <ellipse cx="77" cy="47" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
+          <ellipse cx="123" cy="47" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
+          <path d="M 78 37 C 78 22 122 22 122 37 C 122 55 113 70 100 71 C 87 70 78 55 78 37 Z" fill="url(#skinGrad_${charKey})"/>
+          <ellipse cx="85" cy="52" rx="5" ry="2.8" fill="${c.blush}"/>
+          <ellipse cx="115" cy="52" rx="5" ry="2.8" fill="${c.blush}"/>
 
-          <!-- 눈썹 -->
           <path d="${browLeft}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
           <path d="${browRight}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
 
-          <!-- 눈 & 눈동자 하이라이트 -->
           <g class="av-eyelids">
-            <ellipse cx="88" cy="41" rx="4.4" ry="3.1" fill="#ffffff"/>
-            <circle cx="88.3" cy="41" r="2.3" fill="#1e293b"/>
-            <circle cx="89.1" cy="40.1" r="0.8" fill="#ffffff"/>
-            <path d="M 83.4 40.3 Q 88 37.2 92.6 40.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <ellipse cx="88" cy="44" rx="4.4" ry="3.1" fill="#ffffff"/>
+            <circle cx="88.3" cy="44" r="2.3" fill="#1e293b"/>
+            <circle cx="89.1" cy="43.1" r="0.8" fill="#ffffff"/>
+            <path d="M 83.4 43.3 Q 88 40.2 92.6 43.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
-            <ellipse cx="112" cy="41" rx="4.4" ry="3.1" fill="#ffffff"/>
-            <circle cx="111.7" cy="41" r="2.3" fill="#1e293b"/>
-            <circle cx="112.5" cy="40.1" r="0.8" fill="#ffffff"/>
-            <path d="M 107.4 40.3 Q 112 37.2 116.6 40.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <ellipse cx="112" cy="44" rx="4.4" ry="3.1" fill="#ffffff"/>
+            <circle cx="111.7" cy="44" r="2.3" fill="#1e293b"/>
+            <circle cx="112.5" cy="43.1" r="0.8" fill="#ffffff"/>
+            <path d="M 107.4 43.3 Q 112 40.2 116.6 43.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
           </g>
 
-          <!-- 코 콧대 & 콧망울 음영 -->
-          <path d="M 100 42 L 98.8 49.5 Q 100 51 101.8 49.8" stroke="${c.skinShadow}" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-
-          <!-- 입 모양 (표정 변화) -->
+          <path d="M 100 45 L 98.8 52.5 Q 100 54 101.8 52.8" stroke="${c.skinShadow}" stroke-width="1.5" stroke-linecap="round" fill="none"/>
           ${mouthPath}
-
-          <!-- 앞머리 레이어 -->
           ${hairFrontSvg}
         </g>
 
-        <!-- 왼팔 & 5지 수어 손동작 -->
+        <!-- 왼팔 & 5지 수어 손 (어깨에서 자연스럽게 이어지고 어두운 배경에서도 윤곽이 선명한 구조) -->
         <g class="av-arm-left">
-          <path d="M 64 100 Q 52 122 62 134 L 74 128 Q 66 116 74 104 Z" fill="${c.outfit}"/>
+          <path d="M 56 96 C 48 114 50 132 58 148 L 73 148 C 67 132 67 118 72 108 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
           <g class="av-hand-left">
-            <!-- 손목 & 손바닥 -->
-            <rect x="58" y="114" width="14" height="16" rx="6" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="0.8"/>
-            <!-- 5개 손가락 관절 -->
+            <!-- 손목 연결부 -->
+            <rect x="61" y="114" width="11" height="10" rx="4" fill="${c.skinShadow}"/>
+            <!-- 손바닥 -->
+            <rect x="57" y="103" width="16.5" height="17" rx="7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="1"/>
+            <!-- 5개 손가락 -->
             <g class="av-fingers-active">
-              <rect x="70" y="116" width="8" height="3.6" rx="1.8" transform="rotate(-24 70 116)" fill="${c.skin}"/>
-              <rect x="58.5" y="102" width="3.1" height="13" rx="1.5" fill="${c.skin}"/>
-              <rect x="62.2" y="100" width="3.2" height="15" rx="1.6" fill="${c.skin}"/>
-              <rect x="66.0" y="102" width="3.1" height="13.5" rx="1.5" fill="${c.skin}"/>
-              <rect x="69.6" y="105" width="2.8" height="11" rx="1.4" fill="${c.skin}"/>
+              <rect x="71" y="109" width="8.5" height="3.8" rx="1.9" transform="rotate(-22 71 109)" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="57.5" y="92" width="3.3" height="13" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="61.4" y="90" width="3.4" height="15" rx="1.7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="65.4" y="92" width="3.3" height="13.5" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="69.2" y="95" width="3.0" height="11" rx="1.5" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
             </g>
           </g>
         </g>
 
-        <!-- 오른팔 & 5지 수어 손동작 -->
+        <!-- 오른팔 & 5지 수어 손 -->
         <g class="av-arm-right">
-          <path d="M 136 100 Q 148 120 138 132 L 126 126 Q 134 114 126 104 Z" fill="${c.outfit}"/>
+          <path d="M 144 96 C 152 114 150 132 142 148 L 127 148 C 133 132 133 118 128 108 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="0.8"/>
           <g class="av-hand-right">
-            <!-- 손목 & 손바닥 -->
-            <rect x="128" y="110" width="14" height="16" rx="6" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="0.8"/>
-            <!-- 5개 손가락 관절 -->
+            <!-- 손목 연결부 -->
+            <rect x="128" y="111" width="11" height="10" rx="4" fill="${c.skinShadow}"/>
+            <!-- 손바닥 -->
+            <rect x="126.5" y="100" width="16.5" height="17" rx="7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="1"/>
+            <!-- 5개 손가락 -->
             <g class="av-fingers-active">
-              <rect x="122" y="113" width="8" height="3.6" rx="1.8" transform="rotate(24 129 113)" fill="${c.skin}"/>
-              <rect x="128.5" y="99" width="3.1" height="13" rx="1.5" fill="${c.skin}"/>
-              <rect x="132.2" y="97" width="3.2" height="15" rx="1.6" fill="${c.skin}"/>
-              <rect x="136.0" y="99" width="3.1" height="13.5" rx="1.5" fill="${c.skin}"/>
-              <rect x="139.6" y="102" width="2.8" height="11" rx="1.4" fill="${c.skin}"/>
+              <rect x="120.5" y="106" width="8.5" height="3.8" rx="1.9" transform="rotate(22 129 106)" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="127.8" y="92" width="3.0" height="11" rx="1.5" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="131.3" y="89" width="3.3" height="13.5" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="135.2" y="87" width="3.4" height="15" rx="1.7" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
+              <rect x="139.2" y="89" width="3.3" height="13" rx="1.6" fill="${c.skin}" stroke="${c.skinShadow}" stroke-width="0.6"/>
             </g>
           </g>
         </g>
