@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>수어 PIP 플레이어 — MoA</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>MoA — 실시간 수어 PIP 플레이어</title>
+  <link rel="stylesheet" href="style.css?v=20261127" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -22,6 +22,7 @@
         </svg>
         <span class="logo-text">MoA</span>
       </a>
+
       <nav class="nav-links" aria-label="주요 메뉴">
         <a href="index.html">콘텐츠 탐색</a>
         <a href="about.html">서비스 소개</a>
@@ -29,25 +30,29 @@
         <a href="community.html">소통 커뮤니티</a>
         <a href="profile.html">내 프로필 · 설정</a>
       </nav>
+
       <div class="header-cta">
-        <a href="index.html" class="btn btn-secondary btn-sm">← 목록으로</a>
-        <a href="profile.html" class="btn btn-primary btn-sm">기본 설정</a>
+        <a href="index.html" class="btn btn-secondary btn-sm">목록으로</a>
+        <a href="pricing.html" class="btn btn-primary btn-sm">MoA Pass</a>
       </div>
     </div>
   </header>
 
-  <main id="playerPageRoot" style="padding-top: 84px;">
-    <section class="section">
+  <main style="padding-top:96px;" id="playerPageRoot">
+    <section class="section" style="padding-top:28px;">
       <div class="container">
-        <div style="margin-bottom:28px;">
-          <div class="eyebrow" id="playerMeta">모아 · MoA 오리지널 시연</div>
-          <h1 class="section-title" id="playerTitle">모아 (MoA) — 배리어프리 시네마 시연작</h1>
-          <p class="section-desc" id="playerSummary">공식 OTT 스트리밍 위에 실시간 AI 수어 아바타를 PIP로 동기화하는 MoA 핵심 시연 영상입니다.</p>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+          <div>
+            <p class="eyebrow" id="playerMeta">모아 · 실시간 수어 시연작</p>
+            <h1 class="section-title" id="playerTitle" style="margin-bottom:4px;">모아 (MoA) — 배리어프리 시네마 시연작</h1>
+            <p class="section-desc" id="playerSummary">공식 스트리밍 영상 위에 AI 수어 아바타를 실시간 동기화하는 시연 플레이어입니다.</p>
+          </div>
+          <a href="index.html" class="btn btn-secondary btn-sm">다른 작품 보기</a>
         </div>
 
         <div class="demo-workspace">
-          <!-- 좌측: 비디오 + 실시간 AI 수어 PIP 오버레이 -->
-          <div>
+          <!-- 좌측 시연 플레이어 화면 -->
+          <div style="display:flex; flex-direction:column; gap:12px;">
             <div class="demo-player-screen" style="background:#05070c; padding:0;">
               <video
                 id="demoVideoEl"
@@ -57,64 +62,55 @@
                 style="width:100%; height:100%; object-fit:cover; display:block;"
               ></video>
 
-              <div style="position:absolute; inset:0; padding:18px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none;">
-                <div class="demo-screen-header">
-                  <span class="badge-live">● MoA 실시간 수어 PIP 동기화</span>
-                  <span style="background:rgba(7,9,15,0.75); padding:4px 10px; border-radius:6px; color:#cbd5e1;">KSL · 타임코드 연동</span>
-                </div>
-
-                <div class="demo-caption-bar">
-                  <p id="playerDialogue">“자막을 넘어, 표정과 손끝의 감정까지 하나의 화면으로 모아냅니다.”</p>
-                  <span id="playerGloss">[수어] 자막 · 넘다 · 표정 · 손짓 · 감정 · 하나로 · 모으다</span>
-                </div>
+              <!-- 상단 오버레이 -->
+              <div class="demo-screen-header" style="position:absolute; top:16px; left:16px; right:16px; z-index:4;">
+                <span class="badge-live">● 모아 오리지널 · 실시간 KSL 동기화</span>
+                <span style="background:rgba(7,9,15,0.75); padding:4px 10px; border-radius:6px; color:#e2e8f0;">CC + KSL</span>
               </div>
 
-              <!-- 플로팅 수어 아바타 PIP 창 -->
-              <div class="pip-widget demo-pip pos-bottom-right char-moa" id="liveDemoPip">
-                <div class="pip-label">
-                  <span id="demoPipCharName">KSL · 모아</span>
-                  <span id="demoPipSpeedBadge">1.0x</span>
-                </div>
-                <div class="avatar-figure">
-                  <div class="avatar-silhouette">
-                    <div class="av-hair"></div>
-                    <div class="av-head"></div>
-                    <div class="av-body"></div>
-                    <div class="av-hand left"></div>
-                    <div class="av-hand right"></div>
-                  </div>
-                </div>
-                <div class="pip-gloss" id="pipActionLabel">오프닝 내레이션 통역</div>
+              <!-- 실시간 수어 아바타 PIP 창 (문구 없이 아바타만 표시) -->
+              <aside class="pip-widget demo-pip pos-bottom-right char-moa" id="liveDemoPip" style="z-index:5;" aria-label="실시간 수어 아바타">
+                <div class="avatar-figure"></div>
+              </aside>
+
+              <!-- 하단 대사 + 수어 글로스 바 -->
+              <div class="demo-caption-bar" style="position:absolute; left:16px; bottom:16px; z-index:4;">
+                <p id="playerDialogue">“자막만으로는 다 담기지 않던 인물의 표정과 감정의 결까지, 이제 수어로 함께 만납니다.”</p>
+                <span id="playerGloss">[수어] 자막 · 넘다 · 표정 · 감정 · 함께 · 만나다</span>
               </div>
             </div>
 
-            <!-- 비디오 재생 컨트롤 바 -->
-            <div style="margin-top:14px; display:flex; align-items:center; gap:12px; background:var(--bg-void); border:1px solid var(--border-subtle); padding:10px 14px; border-radius:var(--radius-sm);">
+            <!-- 재생 컨트롤 바 -->
+            <div style="display:flex; align-items:center; gap:14px; background:var(--bg-void); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:10px 16px;">
               <button type="button" id="videoPlayPauseBtn" class="btn btn-secondary btn-sm">❚❚ 일시정지</button>
               <input type="range" id="videoSeekBar" min="0" max="100" value="0" style="flex:1; accent-color:var(--accent-lavender);" aria-label="재생 위치" />
-              <span id="videoTimeText" style="font-size:12px; color:var(--text-secondary); min-width:76px; text-align:right;">00:00 / 00:15</span>
+              <span id="videoTimeText" style="font-size:12px; color:var(--text-secondary); min-width:86px; text-align:right;">00:00 / 00:15</span>
             </div>
           </div>
 
-          <!-- 우측: 실시간 수어 PIP 컨트롤러 -->
-          <aside class="demo-control-panel" aria-label="수어 아바타 PIP 설정">
+          <!-- 우측 아바타 개인화 컨트롤 패널 -->
+          <div class="demo-control-panel">
             <div>
-              <div class="control-group">
-                <div class="control-row">
-                  <strong>수어 아바타 오버레이</strong>
-                  <button type="button" id="demoPipToggle" class="toggle-switch">아바타 ON</button>
-                </div>
-              </div>
+              <h3 style="font-size:17px; margin-bottom:4px;">수어 아바타 개인화 컨트롤</h3>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px;">아바타와 배경의 불투명도를 각각 조절해 영상 몰입감을 맞춰 보세요.</p>
 
               <div class="control-group">
                 <div class="control-row">
-                  <span>아바타 캐릭터</span>
-                  <strong id="demoCharActiveLabel" style="color:var(--accent-lavender); font-size:12px;">모아 (표준 AI 아바타)</strong>
+                  <span>수어 아바타 오버레이</span>
+                  <button type="button" class="toggle-switch" id="demoPipToggle">아바타 ON</button>
                 </div>
-                <div class="char-selector">
-                  <button type="button" class="char-btn active" data-char="moa">모아 · 표준</button>
-                  <button type="button" class="char-btn" data-char="seoyeon">서연 · 감성</button>
-                  <button type="button" class="char-btn" data-char="dohyun">도현 · 선명</button>
+              </div>
+
+              <!-- 수어 아바타 캐릭터 선택 4종 -->
+              <div class="control-group">
+                <div class="control-row">
+                  <span>수어 아바타 캐릭터</span>
+                  <strong id="demoCharActiveLabel" style="color:var(--accent-lavender);">모아 (표준 AI 아바타)</strong>
+                </div>
+                <div class="char-selector" id="demoCharSelector">
+                  <button type="button" class="char-btn active" data-char="moa">모아 · 표준형</button>
+                  <button type="button" class="char-btn" data-char="seoyeon">서연 · 감성형</button>
+                  <button type="button" class="char-btn" data-char="dohyun">도현 · 선명형</button>
                   <button type="button" class="char-btn" data-char="nova">노바 · 미니멀</button>
                 </div>
               </div>
@@ -129,24 +125,30 @@
 
               <div class="control-group">
                 <div class="control-row">
-                  <span>배경 투명도</span>
+                  <span>아바타 불투명도</span>
                   <strong id="demoOpacityLabel">95%</strong>
                 </div>
-                <input type="range" id="demoOpacityRange" min="50" max="100" value="95" />
+                <input type="range" id="demoOpacityRange" min="20" max="100" value="95" />
               </div>
 
               <div class="control-group">
                 <div class="control-row">
-                  <span>재생 · 수어 싱크 속도</span>
+                  <span>배경 박스 불투명도</span>
+                  <strong id="demoBgOpacityLabel">75%</strong>
+                </div>
+                <input type="range" id="demoBgOpacityRange" min="0" max="100" value="75" />
+              </div>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <span>수어 재생 속도</span>
                   <strong id="demoSpeedLabel">1.0x</strong>
                 </div>
-                <input type="range" id="demoSpeedRange" min="0.8" max="1.4" step="0.1" value="1.0" />
+                <input type="range" id="demoSpeedRange" min="0.8" max="1.3" step="0.1" value="1.0" />
               </div>
 
               <div class="control-group">
-                <div class="control-row">
-                  <span>화면 배치 위치</span>
-                </div>
+                <div class="control-row"><span>화면 배치 위치</span></div>
                 <div class="pos-selector">
                   <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
                   <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
@@ -157,25 +159,25 @@
             </div>
 
             <div>
-              <button type="button" id="demoSavePrefsBtn" class="btn btn-primary" style="width:100%;">
-                현재 설정을 기본값으로 저장
-              </button>
-              <p id="demoSaveStatus" style="font-size:12px; color:var(--accent-lavender); margin-top:8px; min-height:18px; text-align:center;"></p>
+              <button type="button" class="btn btn-primary" style="width:100%;" id="demoSavePrefsBtn">이 설정을 내 기본값으로 저장</button>
+              <p id="demoSaveStatus" style="font-size:12px; color:var(--accent-lavender); text-align:center; margin-top:8px; min-height:18px;"></p>
             </div>
-          </aside>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-bottom">
-      <span>© 2026 MoA. All Rights Reserved.</span>
-      <span>AI Sign Language OTT Accessibility</span>
+    <div class="container">
+      <div class="footer-bottom" style="border-top:none; padding-top:0;">
+        <span>© 2026 MoA. All Rights Reserved.</span>
+        <span>본 프로토타입에 표기된 외부 OTT 서비스명 및 작품명은 연동 시연을 위한 예시이며, 각 권리사에 귀속됩니다.</span>
+      </div>
     </div>
   </footer>
 
-  <script src="supabase.js"></script>
-  <script src="app.js"></script>
+  <script src="supabase.js?v=20261127"></script>
+  <script src="app.js?v=20261127"></script>
 </body>
 </html>
