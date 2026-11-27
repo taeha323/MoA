@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System & SVG Logo Integration */
+/* style.css — MoA Cinematic OTT Design System (안정화 최종본) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -48,22 +48,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 0 28px;
 }
 
-/* 스크롤 등장 애니메이션 */
+/* 기본 노출 보장 (빈 화면 방지) */
 .reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 1;
+  transform: translateY(0);
 }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
 
-/* 상단 내비게이션 & 1안 곡선 모노그램 SVG 로고 */
+/* 상단 내비게이션 & 선명한 MoA 루프 로고 */
 .site-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(7, 9, 15, 0.82);
+  background: rgba(7, 9, 15, 0.88);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -81,7 +79,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -0.01em;
@@ -92,18 +90,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 .logo svg {
   display: block;
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
 .logo:hover svg {
-  transform: scale(1.06) rotate(-2deg);
+  transform: scale(1.06);
 }
 
 .logo-text {
   font-weight: 900;
-  background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #f8fafc;
 }
 
 .nav-links {
@@ -177,6 +174,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-top: 62px;
   overflow: hidden;
   border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-navy);
 }
 
 .ott-hero-bg {
@@ -255,6 +253,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   align-items: center;
   gap: 12px;
   margin-bottom: 28px;
+  flex-wrap: wrap;
 }
 
 .hero-dots {
@@ -280,7 +279,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 /* 아바타 PIP 위젯 */
 .pip-widget {
   width: 176px;
-  background: rgba(13, 18, 31, 0.9);
+  background: rgba(13, 18, 31, 0.92);
   backdrop-filter: blur(12px);
   border: 1.5px solid var(--accent-lavender);
   border-radius: var(--radius-md);
@@ -513,7 +512,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   flex: 1;
 }
 
-/* 네이티브 스폰서 배너 (광고 영역) */
+/* 네이티브 스폰서 배너 */
 .sponsor-banner {
   margin: 44px 0 12px;
   background: linear-gradient(90deg, rgba(19, 26, 43, 0.95) 0%, rgba(28, 37, 62, 0.9) 100%);
@@ -780,4 +779,131 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .form-select,
 .form-textarea {
   width: 100%;
-  padding
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.form-textarea { min-height: 110px; resize: vertical; }
+
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.post-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(167, 139, 250, 0.14);
+  color: var(--accent-lavender);
+}
+
+.post-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.post-body { font-size: 14px; color: var(--text-secondary); margin-bottom: 14px; }
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+}
+
+.like-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.like-btn:hover { border-color: var(--accent-lavender); color: #fff; }
+
+/* 소개 및 멤버십 카드 그리드 */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.about-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 34px;
+}
+.about-card.highlight {
+  border-color: rgba(167, 139, 250, 0.35);
+  background: linear-gradient(160deg, rgba(59, 130, 246, 0.08), rgba(19, 26, 43, 0.95));
+}
+.steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.step-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 30px 24px;
+}
+.brand-story-section {
+  padding: 120px 0;
+  text-align: center;
+  background: radial-gradient(circle at 50% 50%, rgba(167, 139, 250, 0.1), transparent 65%);
+}
+.brand-quote {
+  font-size: clamp(24px, 3.6vw, 40px);
+  font-weight: 700;
+  line-height: 1.35;
+  max-width: 800px;
+  margin: 0 auto 20px;
+}
+
+/* 푸터 */
+.site-footer {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-void);
+  padding: 56px 0 42px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 36px;
+  margin-bottom: 36px;
+}
+
+.footer-col h4 { color: var(--text-primary); font-size: 14px; margin-bottom: 12px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.footer-bottom {
+  padding-top: 22px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+@media (max-width: 960px) {
+  .ott-hero { height: auto; padding: 60px 0; }
+  .ott-hero-inner { flex-direction: column; align-items: flex-start; }
+  .poster-grid { grid-template-columns: repeat(2, 1fr); }
+  .demo-workspace, .community-layout, .about-grid, .steps-row, .footer-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 600px) {
+  .poster-grid { grid-template-columns: 1fr; }
+}
