@@ -1,4 +1,4 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (버튼 통일 + 영상 폴백 동기화) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (리얼 휴먼 아바타 표정·5지 관절 동기화) */
 (function () {
   const PREFS_KEY = 'moa_pip_prefs_v1';
   const SUB_KEY = 'moa_pass_subscribed';
@@ -6,10 +6,54 @@
   const POSTS_KEY = 'moa_community_posts_v1';
 
   const AVATAR_META = {
-    moa: { name: '모아', tag: '표준 AI 아바타' },
-    seoyeon: { name: '서연', tag: '감성 드라마형' },
-    dohyun: { name: '도현', tag: '선명 전달형' },
-    nova: { name: '노바', tag: '고대비 미니멀' }
+    moa: {
+      name: '모아',
+      tag: '표준 AI 아바타',
+      skin: '#f6d2be',
+      skinShadow: '#dfa88e',
+      hair: '#1e2433',
+      hairBack: '#151924',
+      hairStyle: 'bob',
+      outfit: '#263868',
+      outfitAccent: '#6366f1',
+      blush: 'rgba(244, 114, 182, 0.22)'
+    },
+    seoyeon: {
+      name: '서연',
+      tag: '감성 드라마형',
+      skin: '#fae0d2',
+      skinShadow: '#e4b39c',
+      hair: '#3b2322',
+      hairBack: '#291716',
+      hairStyle: 'long',
+      outfit: '#9d3b66',
+      outfitAccent: '#f472b6',
+      blush: 'rgba(251, 113, 133, 0.32)'
+    },
+    dohyun: {
+      name: '도현',
+      tag: '선명 전달형',
+      skin: '#ecc2a6',
+      skinShadow: '#cf9b7a',
+      hair: '#141820',
+      hairBack: '#0e1117',
+      hairStyle: 'short',
+      outfit: '#145349',
+      outfitAccent: '#34d399',
+      blush: 'rgba(225, 130, 110, 0.14)'
+    },
+    nova: {
+      name: '노바',
+      tag: '고대비 미니멀',
+      skin: '#f3e5dc',
+      skinShadow: '#d4beb2',
+      hair: '#0f172a',
+      hairBack: '#090d16',
+      hairStyle: 'sleek',
+      outfit: '#1e293b',
+      outfitAccent: '#e2e8f0',
+      blush: 'rgba(148, 163, 184, 0.18)'
+    }
   };
 
   const DEFAULT_PREFS = {
@@ -49,13 +93,156 @@
     });
   }
 
-  function applyAvatarCharacterTheme(pipEl, charKey, labelEl) {
+  /* 리얼 휴먼 수어 아바타 SVG 생성기 (표정 4종 + 5지 관절) */
+  function buildRealisticAvatarSVG(charKey, mood) {
+    const c = AVATAR_META[charKey] || AVATAR_META.moa;
+    const m = mood || 'smile';
+
+    const browLeft = m === 'focus'
+      ? 'M 81 33 Q 87 35 93 34'
+      : m === 'emphasis'
+        ? 'M 81 31 Q 87 28 93 32'
+        : 'M 81 33 Q 87 30 93 32';
+
+    const browRight = m === 'focus'
+      ? 'M 107 34 Q 113 35 119 33'
+      : m === 'emphasis'
+        ? 'M 107 32 Q 113 28 119 31'
+        : 'M 107 32 Q 113 30 119 33';
+
+    const mouthPath = m === 'emphasis'
+      ? '<ellipse cx="100" cy="57" rx="5.2" ry="3.6" fill="#9f4a54"/><path d="M 95.5 56 Q 100 54.5 104.5 56" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
+      : m === 'focus'
+        ? '<path d="M 94 56.5 Q 100 57.5 106 56.5" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
+        : '<path d="M 93 55.5 Q 100 61.5 107 55.5" stroke="#b45362" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M 95 56.5 Q 100 59.5 105 56.5" fill="#ffffff" opacity="0.75"/>';
+
+    const hairBackSvg = c.hairStyle === 'long'
+      ? `<path d="M 70 36 C 66 64 68 92 76 104 L 124 104 C 132 92 134 64 130 36 Z" fill="${c.hairBack}"/>`
+      : c.hairStyle === 'bob'
+        ? `<path d="M 73 36 C 70 56 72 72 78 78 L 122 78 C 128 72 130 56 127 36 Z" fill="${c.hairBack}"/>`
+        : '';
+
+    const hairFrontSvg = c.hairStyle === 'short'
+      ? `<path d="M 77 38 C 76 20 88 14 100 14 C 112 14 124 20 123 38 C 120 27 111 24 102 26 C 93 28 84 25 77 38 Z" fill="${c.hair}"/>`
+      : c.hairStyle === 'sleek'
+        ? `<path d="M 77 39 C 76 18 89 13 100 13 C 111 13 124 18 123 39 C 118 24 106 22 100 22 C 94 22 82 24 77 39 Z" fill="${c.hair}"/>`
+        : `<path d="M 76 41 C 74 19 88 13 100 13 C 112 13 126 19 124 41 C 121 27 112 24 103 27 C 95 30 85 26 76 41 Z" fill="${c.hair}"/>`;
+
+    const shoulderWidth = c.hairStyle === 'short' ? 'M 46 150 C 48 112 64 96 84 93 L 116 93 C 136 96 152 112 154 150 Z'
+      : 'M 52 150 C 54 114 68 98 86 94 L 114 94 C 132 98 146 114 148 150 Z';
+
+    return `
+      <svg class="human-avatar-svg" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="skinGrad_${charKey}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${c.skin}"/>
+            <stop offset="100%" stop-color="${c.skinShadow}"/>
+          </linearGradient>
+          <linearGradient id="outfitGrad_${charKey}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${c.outfit}"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+          </linearGradient>
+        </defs>
+
+        <!-- 뒷머리 레이어 -->
+        ${hairBackSvg}
+
+        <!-- 상반신 및 의상 -->
+        <g class="av-torso-group">
+          <path d="${shoulderWidth}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <!-- V넥 / 카라 포인트 -->
+          <path d="M 85 94 L 100 116 L 115 94 L 108 93 L 100 106 L 92 93 Z" fill="${c.outfitAccent}" opacity="0.9"/>
+          <!-- 목 & 쇄골 음영 -->
+          <path d="M 91 66 L 91 95 Q 100 102 109 95 L 109 66 Z" fill="url(#skinGrad_${charKey})"/>
+          <path d="M 91 68 Q 100 74 109 68 L 109 75 Q 100 80 91 75 Z" fill="${c.skinShadow}" opacity="0.55"/>
+        </g>
+
+        <!-- 얼굴 & 비수지 신호(표정) 레이어 -->
+        <g class="av-head-group">
+          <!-- 양쪽 귀 -->
+          <ellipse cx="77" cy="44" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
+          <ellipse cx="123" cy="44" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
+          <!-- 얼굴 윤곽 -->
+          <path d="M 78 34 C 78 19 122 19 122 34 C 122 52 113 67 100 68 C 87 67 78 52 78 34 Z" fill="url(#skinGrad_${charKey})"/>
+          <!-- 볼 홍조 -->
+          <ellipse cx="85" cy="49" rx="5" ry="2.8" fill="${c.blush}"/>
+          <ellipse cx="115" cy="49" rx="5" ry="2.8" fill="${c.blush}"/>
+
+          <!-- 눈썹 -->
+          <path d="${browLeft}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="${browRight}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+          <!-- 눈 & 눈동자 하이라이트 -->
+          <g class="av-eyelids">
+            <ellipse cx="88" cy="41" rx="4.4" ry="3.1" fill="#ffffff"/>
+            <circle cx="88.3" cy="41" r="2.3" fill="#1e293b"/>
+            <circle cx="89.1" cy="40.1" r="0.8" fill="#ffffff"/>
+            <path d="M 83.4 40.3 Q 88 37.2 92.6 40.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+            <ellipse cx="112" cy="41" rx="4.4" ry="3.1" fill="#ffffff"/>
+            <circle cx="111.7" cy="41" r="2.3" fill="#1e293b"/>
+            <circle cx="112.5" cy="40.1" r="0.8" fill="#ffffff"/>
+            <path d="M 107.4 40.3 Q 112 37.2 116.6 40.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          </g>
+
+          <!-- 코 콧대 & 콧망울 음영 -->
+          <path d="M 100 42 L 98.8 49.5 Q 100 51 101.8 49.8" stroke="${c.skinShadow}" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+
+          <!-- 입 모양 (표정 변화) -->
+          ${mouthPath}
+
+          <!-- 앞머리 레이어 -->
+          ${hairFrontSvg}
+        </g>
+
+        <!-- 왼팔 & 5지 수어 손동작 -->
+        <g class="av-arm-left">
+          <path d="M 64 100 Q 52 122 62 134 L 74 128 Q 66 116 74 104 Z" fill="${c.outfit}"/>
+          <g class="av-hand-left">
+            <!-- 손목 & 손바닥 -->
+            <rect x="58" y="114" width="14" height="16" rx="6" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="0.8"/>
+            <!-- 5개 손가락 관절 -->
+            <g class="av-fingers-active">
+              <rect x="70" y="116" width="8" height="3.6" rx="1.8" transform="rotate(-24 70 116)" fill="${c.skin}"/>
+              <rect x="58.5" y="102" width="3.1" height="13" rx="1.5" fill="${c.skin}"/>
+              <rect x="62.2" y="100" width="3.2" height="15" rx="1.6" fill="${c.skin}"/>
+              <rect x="66.0" y="102" width="3.1" height="13.5" rx="1.5" fill="${c.skin}"/>
+              <rect x="69.6" y="105" width="2.8" height="11" rx="1.4" fill="${c.skin}"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- 오른팔 & 5지 수어 손동작 -->
+        <g class="av-arm-right">
+          <path d="M 136 100 Q 148 120 138 132 L 126 126 Q 134 114 126 104 Z" fill="${c.outfit}"/>
+          <g class="av-hand-right">
+            <!-- 손목 & 손바닥 -->
+            <rect x="128" y="110" width="14" height="16" rx="6" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="0.8"/>
+            <!-- 5개 손가락 관절 -->
+            <g class="av-fingers-active">
+              <rect x="122" y="113" width="8" height="3.6" rx="1.8" transform="rotate(24 129 113)" fill="${c.skin}"/>
+              <rect x="128.5" y="99" width="3.1" height="13" rx="1.5" fill="${c.skin}"/>
+              <rect x="132.2" y="97" width="3.2" height="15" rx="1.6" fill="${c.skin}"/>
+              <rect x="136.0" y="99" width="3.1" height="13.5" rx="1.5" fill="${c.skin}"/>
+              <rect x="139.6" y="102" width="2.8" height="11" rx="1.4" fill="${c.skin}"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+    `;
+  }
+
+  function applyAvatarCharacterTheme(pipEl, charKey, labelEl, mood) {
     if (!pipEl) return;
     const key = AVATAR_META[charKey] ? charKey : 'moa';
     pipEl.classList.remove('char-moa', 'char-seoyeon', 'char-dohyun', 'char-nova');
     pipEl.classList.add(`char-${key}`);
     if (labelEl) {
       labelEl.textContent = `KSL · ${AVATAR_META[key].name}`;
+    }
+    const fig = pipEl.querySelector('.avatar-figure');
+    if (fig) {
+      fig.innerHTML = buildRealisticAvatarSVG(key, mood || 'smile');
     }
   }
 
@@ -69,15 +256,7 @@
     const heroPip = document.querySelector('#ottHeroSection .pip-widget');
     const heroPipLabel = document.querySelector('#ottHeroSection .pip-label span:first-child');
     if (heroPip) {
-      if (!heroPip.querySelector('.av-hair')) {
-        const sil = heroPip.querySelector('.avatar-silhouette');
-        if (sil) {
-          const hair = document.createElement('div');
-          hair.className = 'av-hair';
-          sil.prepend(hair);
-        }
-      }
-      applyAvatarCharacterTheme(heroPip, prefs.character, heroPipLabel);
+      applyAvatarCharacterTheme(heroPip, prefs.character, heroPipLabel, 'smile');
     }
 
     const allContents = (window.MOA_DATA && Array.isArray(window.MOA_DATA.contents))
@@ -218,7 +397,7 @@
     renderGrid();
   }
 
-  /* 2. PIP 플레이어 (player.html) — 영상 재생 및 폴백 시네마 타이머 보장 */
+  /* 2. PIP 플레이어 (player.html) — 표정·손동작 실시간 싱크 + 영상 폴백 */
   function initPlayer() {
     const root = document.getElementById('playerPageRoot');
     if (!root) return;
@@ -246,6 +425,7 @@
     if (summaryEl) summaryEl.textContent = item.summary;
 
     const prefs = getPrefs();
+    let currentMood = 'smile';
     const pipBox = document.getElementById('liveDemoPip');
     const pipCharLabel = document.getElementById('demoPipCharName');
     const pipToggle = document.getElementById('demoPipToggle');
@@ -262,7 +442,7 @@
     const saveBtn = document.getElementById('demoSavePrefsBtn');
     const saveStatus = document.getElementById('demoSaveStatus');
 
-    function applyPipStyles() {
+    function applyPipStyles(forceRebuildAvatar) {
       if (!pipBox) return;
       pipBox.classList.toggle('is-hidden', !prefs.enabled);
       pipBox.classList.remove('pos-top-left', 'pos-top-right', 'pos-bottom-left', 'pos-bottom-right');
@@ -270,7 +450,9 @@
       pipBox.style.transform = `scale(${prefs.scale / 100})`;
       pipBox.style.opacity = prefs.enabled ? String(prefs.opacity / 100) : '0';
 
-      applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel);
+      if (forceRebuildAvatar) {
+        applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel, currentMood);
+      }
 
       const meta = AVATAR_META[prefs.character] || AVATAR_META.moa;
       if (charActiveText) charActiveText.textContent = `${meta.name} (${meta.tag})`;
@@ -301,37 +483,37 @@
     if (pipToggle) {
       pipToggle.addEventListener('click', () => {
         prefs.enabled = !prefs.enabled;
-        applyPipStyles();
+        applyPipStyles(false);
       });
     }
     charBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         prefs.character = btn.getAttribute('data-char') || 'moa';
-        applyPipStyles();
+        applyPipStyles(true);
       });
     });
     if (scaleRange) {
       scaleRange.addEventListener('input', (e) => {
         prefs.scale = Number(e.target.value);
-        applyPipStyles();
+        applyPipStyles(false);
       });
     }
     if (opacityRange) {
       opacityRange.addEventListener('input', (e) => {
         prefs.opacity = Number(e.target.value);
-        applyPipStyles();
+        applyPipStyles(false);
       });
     }
     if (speedRange) {
       speedRange.addEventListener('input', (e) => {
         prefs.speed = Number(e.target.value);
-        applyPipStyles();
+        applyPipStyles(false);
       });
     }
     posBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         prefs.position = btn.getAttribute('data-pos') || 'bottom-right';
-        applyPipStyles();
+        applyPipStyles(false);
       });
     });
     if (saveBtn) {
@@ -341,7 +523,7 @@
       });
     }
 
-    applyPipStyles();
+    applyPipStyles(true);
 
     function formatSec(sec) {
       const s = Math.max(0, Math.floor(sec || 0));
@@ -356,9 +538,21 @@
 
       const timeline = item.timeline || [];
       let activeCue = timeline[0];
+      let cueIndex = 0;
       for (let i = 0; i < timeline.length; i++) {
-        if (cur >= timeline[i].time) activeCue = timeline[i];
+        if (cur >= timeline[i].time) {
+          activeCue = timeline[i];
+          cueIndex = i;
+        }
       }
+
+      const moods = ['smile', 'focus', 'emphasis', 'smile'];
+      const nextMood = moods[cueIndex % moods.length];
+      if (nextMood !== currentMood) {
+        currentMood = nextMood;
+        applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel, currentMood);
+      }
+
       if (activeCue) {
         if (dialogueEl) dialogueEl.textContent = activeCue.dialogue;
         if (glossEl) glossEl.textContent = activeCue.gloss;
@@ -367,7 +561,6 @@
     }
 
     if (videoEl) {
-      // 포스터 배경을 기본으로 세팅해 영상 로딩 전/실패 시에도 검은 화면이 안 보이게 처리
       if (screenBox && item.poster) {
         screenBox.style.backgroundImage = `linear-gradient(rgba(7,9,15,0.35), rgba(7,9,15,0.55)), url('${item.poster}')`;
         screenBox.style.backgroundSize = 'cover';
