@@ -70,13 +70,14 @@
               </div>
 
               <!-- 플로팅 수어 아바타 PIP 창 -->
-              <div class="pip-widget demo-pip pos-bottom-right" id="liveDemoPip">
+              <div class="pip-widget demo-pip pos-bottom-right char-moa" id="liveDemoPip">
                 <div class="pip-label">
-                  <span>KSL 아바타</span>
+                  <span id="demoPipCharName">KSL · 모아</span>
                   <span id="demoPipSpeedBadge">1.0x</span>
                 </div>
                 <div class="avatar-figure">
                   <div class="avatar-silhouette">
+                    <div class="av-hair"></div>
                     <div class="av-head"></div>
                     <div class="av-body"></div>
                     <div class="av-hand left"></div>
@@ -102,6 +103,19 @@
                 <div class="control-row">
                   <strong>수어 아바타 오버레이</strong>
                   <button type="button" id="demoPipToggle" class="toggle-switch">아바타 ON</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <span>아바타 캐릭터</span>
+                  <strong id="demoCharActiveLabel" style="color:var(--accent-lavender); font-size:12px;">모아 (표준 AI 아바타)</strong>
+                </div>
+                <div class="char-selector">
+                  <button type="button" class="char-btn active" data-char="moa">모아 · 표준</button>
+                  <button type="button" class="char-btn" data-char="seoyeon">서연 · 감성</button>
+                  <button type="button" class="char-btn" data-char="dohyun">도현 · 선명</button>
+                  <button type="button" class="char-btn" data-char="nova">노바 · 미니멀</button>
                 </div>
               </div>
 
