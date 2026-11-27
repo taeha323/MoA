@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System (v20261127_2: 심플 일체형 아바타 + 자유 드래그 PIP) */
+/* style.css — MoA Cinematic OTT Design System (v20261127_3: 매끄러운 일체형 팔·손목 + 마우스 자유 드래그) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -48,11 +48,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 0 28px;
 }
 
-.reveal {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* 상단 내비게이션 & MoA 루프 로고 */
 .site-header {
   position: fixed;
@@ -87,20 +82,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   user-select: none;
 }
 
-.logo svg {
-  display: block;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover svg {
-  transform: scale(1.06);
-}
-
-.logo-text {
-  font-weight: 900;
-  color: #f8fafc;
-}
+.logo svg { display: block; flex-shrink: 0; transition: transform 0.3s ease; }
+.logo:hover svg { transform: scale(1.06); }
+.logo-text { font-weight: 900; color: #f8fafc; }
 
 .nav-links {
   display: flex;
@@ -121,11 +105,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   font-weight: 600;
 }
 
-.header-cta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.header-cta { display: flex; align-items: center; gap: 10px; }
 
 /* 버튼 시스템 */
 .btn {
@@ -203,9 +183,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   gap: 40px;
 }
 
-.ott-hero-content {
-  max-width: 580px;
-}
+.ott-hero-content { max-width: 580px; }
 
 .ott-hero-meta {
   display: inline-flex;
@@ -223,11 +201,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: #fff;
 }
 
-.genre-chip {
-  font-size: 13px;
-  color: var(--accent-lavender);
-  font-weight: 600;
-}
+.genre-chip { font-size: 13px; color: var(--accent-lavender); font-weight: 600; }
 
 .ott-hero-title {
   font-size: clamp(32px, 4.4vw, 50px);
@@ -255,10 +229,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   flex-wrap: wrap;
 }
 
-.hero-dots {
-  display: flex;
-  gap: 8px;
-}
+.hero-dots { display: flex; gap: 8px; }
 
 .hero-dot {
   width: 24px;
@@ -270,16 +241,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   transition: all 0.3s;
 }
 
-.hero-dot.active {
-  width: 42px;
-  background: var(--accent-lavender);
-}
+.hero-dot.active { width: 42px; background: var(--accent-lavender); }
 
 /* =========================================================
-   몰입형 심플 수어 아바타 PIP 위젯
-   - 문구 완전 제거
-   - 배경 불투명도(--pip-bg-alpha)와 아바타 불투명도(--pip-avatar-alpha) 분리
-   - 관절 분리 없는 일체형 심플 캐릭터 + 자유 드래그 지원
+   수어 아바타 PIP 위젯 (마우스 자유 드래그 + 끊김 없는 단일 구조)
    ========================================================= */
 .pip-widget {
   --pip-bg-alpha: 0.72;
@@ -294,8 +259,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   box-shadow: 0 18px 40px rgba(0, 0, 0, calc(0.5 * var(--pip-bg-alpha)));
   text-align: center;
   user-select: none;
+  -webkit-user-select: none;
   touch-action: none;
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .pip-widget .pip-label,
@@ -306,20 +271,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .demo-pip {
   position: absolute;
   cursor: grab;
-  transition: transform 0.2s ease, top 0.25s ease, bottom 0.25s ease, left 0.25s ease, right 0.25s ease;
+  z-index: 20;
+  transition: transform 0.2s ease, top 0.22s ease, bottom 0.22s ease, left 0.22s ease, right 0.22s ease;
+}
+
+.demo-pip:hover {
+  border-color: rgba(167, 139, 250, 0.85);
 }
 
 .demo-pip.is-dragging {
-  cursor: grabbing;
+  cursor: grabbing !important;
   transition: none !important;
-  box-shadow: 0 22px 48px rgba(167, 139, 250, 0.38);
+  box-shadow: 0 22px 48px rgba(167, 139, 250, 0.45);
 }
 
 .demo-pip.pos-bottom-right { right: 20px; bottom: 56px; transform-origin: bottom right; }
 .demo-pip.pos-bottom-left  { left: 20px;  bottom: 56px; transform-origin: bottom left; }
 .demo-pip.pos-top-right    { right: 20px; top: 54px;    transform-origin: top right; }
 .demo-pip.pos-top-left     { left: 20px;  top: 54px;    transform-origin: top left; }
-.demo-pip.pos-custom       { transform-origin: center center; }
+.demo-pip.pos-custom       { transform-origin: top left; }
 .demo-pip.is-hidden        { display: none !important; }
 
 .avatar-figure {
@@ -340,7 +310,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   width: 172px;
   height: 156px;
   display: block;
-  filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.4));
+  pointer-events: none;
 }
 
 /* 고개·눈 깜빡임 */
@@ -354,15 +324,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   animation: simpleBlink 4.6s infinite;
 }
 
-/* 일체형 팔·손 부드러운 제스처 (절대 분리되지 않는 단일 피벗 회전) */
+/* 팔+손목+손 단일 그룹 회전 (어깨 아래 중심점에서 부드럽게 움직여 절대 끊어지지 않음) */
 .av-limb-left {
-  transform-origin: 72px 142px;
-  animation: simpleLeftGesture 2.6s infinite ease-in-out;
+  transform-origin: 70px 134px;
+  animation: smoothLeftHand 2.6s infinite ease-in-out;
 }
 
 .av-limb-right {
-  transform-origin: 128px 142px;
-  animation: simpleRightGesture 2.6s infinite ease-in-out;
+  transform-origin: 130px 134px;
+  animation: smoothRightHand 2.6s infinite ease-in-out;
 }
 
 @keyframes simpleHeadNod {
@@ -376,31 +346,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   48%, 96% { transform: scaleY(0.08); }
 }
 
-@keyframes simpleLeftGesture {
+@keyframes smoothLeftHand {
   0%, 100% { transform: rotate(0deg) translateY(0px); }
-  35% { transform: rotate(7deg) translateY(-6px); }
-  70% { transform: rotate(-4deg) translateY(-3px); }
+  35% { transform: rotate(6deg) translateY(-5px); }
+  70% { transform: rotate(-3deg) translateY(-2px); }
 }
 
-@keyframes simpleRightGesture {
+@keyframes smoothRightHand {
   0%, 100% { transform: rotate(0deg) translateY(0px); }
-  35% { transform: rotate(-8deg) translateY(-8px); }
-  70% { transform: rotate(4deg) translateY(-4px); }
+  35% { transform: rotate(-7deg) translateY(-7px); }
+  70% { transform: rotate(3deg) translateY(-3px); }
 }
 
 /* 캐릭터 4종 테두리 컬러 */
-.pip-widget.char-moa {
-  border-color: rgba(167, 139, 250, calc(0.65 * var(--pip-bg-alpha)));
-}
-.pip-widget.char-seoyeon {
-  border-color: rgba(244, 114, 182, calc(0.65 * var(--pip-bg-alpha)));
-}
-.pip-widget.char-dohyun {
-  border-color: rgba(52, 211, 153, calc(0.65 * var(--pip-bg-alpha)));
-}
-.pip-widget.char-nova {
-  border-color: rgba(226, 232, 240, calc(0.65 * var(--pip-bg-alpha)));
-}
+.pip-widget.char-moa     { border-color: rgba(167, 139, 250, calc(0.65 * var(--pip-bg-alpha))); }
+.pip-widget.char-seoyeon { border-color: rgba(244, 114, 182, calc(0.65 * var(--pip-bg-alpha))); }
+.pip-widget.char-dohyun  { border-color: rgba(52, 211, 153, calc(0.65 * var(--pip-bg-alpha))); }
+.pip-widget.char-nova    { border-color: rgba(226, 232, 240, calc(0.65 * var(--pip-bg-alpha))); }
 
 /* 섹션 공통 */
 .section { padding: 72px 0; }
@@ -426,10 +388,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-bottom: 10px;
 }
 
-.section-desc {
-  font-size: 15px;
-  color: var(--text-secondary);
-}
+.section-desc { font-size: 15px; color: var(--text-secondary); }
 
 /* 필터 & 검색 툴바 */
 .showcase-toolbar {
@@ -441,11 +400,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   margin-bottom: 28px;
 }
 
-.filter-group {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+.filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .filter-chip {
   padding: 8px 16px;
@@ -544,12 +499,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   flex-direction: column;
 }
 
-.poster-meta {
-  font-size: 12px;
-  color: var(--accent-lavender);
-  margin-bottom: 6px;
-}
-
+.poster-meta { font-size: 12px; color: var(--accent-lavender); margin-bottom: 6px; }
 .poster-info h3 { font-size: 18px; margin-bottom: 8px; }
 .poster-info p {
   font-size: 13px;
@@ -572,11 +522,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   flex-wrap: wrap;
 }
 
-.sponsor-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+.sponsor-left { display: flex; align-items: center; gap: 16px; }
 
 .ad-badge {
   font-size: 10px;
@@ -589,16 +535,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   flex-shrink: 0;
 }
 
-.sponsor-text h4 {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.sponsor-text p {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
+.sponsor-text h4 { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.sponsor-text p { font-size: 13px; color: var(--text-secondary); }
 
 /* 좌우 양쪽 사이드 광고 슬롯 레이아웃 */
 .catalog-with-ads {
@@ -644,9 +582,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   transition: transform 0.5s ease;
 }
 
-.side-ad-poster:hover .side-ad-bg {
-  transform: scale(1.04);
-}
+.side-ad-poster:hover .side-ad-bg { transform: scale(1.04); }
 
 .side-ad-poster::after {
   content: '';
@@ -674,44 +610,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: #cbd5e1;
 }
 
-.side-ad-bottom {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.side-ad-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--accent-lavender);
-}
-
-.side-ad-title {
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1.32;
-  color: #ffffff;
-  word-break: keep-all;
-}
-
-.side-ad-desc {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: #cbd5e1;
-  word-break: keep-all;
-  margin-bottom: 6px;
-}
+.side-ad-bottom { display: flex; flex-direction: column; gap: 8px; }
+.side-ad-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: var(--accent-lavender); }
+.side-ad-title { font-size: 17px; font-weight: 800; line-height: 1.32; color: #ffffff; word-break: keep-all; }
+.side-ad-desc { font-size: 12.5px; line-height: 1.5; color: #cbd5e1; word-break: keep-all; margin-bottom: 6px; }
 
 @media (max-width: 1580px) {
-  .catalog-with-ads {
-    display: block;
-    max-width: 1240px;
-    padding: 0 28px;
-  }
-  .side-ad-rail {
-    display: none;
-  }
+  .catalog-with-ads { display: block; max-width: 1240px; padding: 0 28px; }
+  .side-ad-rail { display: none; }
 }
 
 /* 플레이어 PIP 워크스페이스 */
@@ -866,18 +772,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 .form-textarea { min-height: 110px; resize: vertical; }
 
-.post-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
+.post-list { display: flex; flex-direction: column; gap: 16px; }
+.post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
 .post-badge {
   font-size: 11px;
