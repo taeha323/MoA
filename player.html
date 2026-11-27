@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>수어 PIP 플레이어 — MoA</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body id="playerPageRoot">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">MoA</span>
+        <span>MoA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">홈으로</a>
+        <a href="contents.html">다른 작품 선택</a>
+        <a href="admin.html">관리자 대시보드</a>
+      </nav>
+      <div class="header-cta">
+        <a id="officialOttBtn" href="https://www.netflix.com" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+          공식 OTT에서 재생 ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding-top: 84px;">
+    <section class="section" style="padding-top:48px;">
+      <div class="container">
+        <div style="margin-bottom:24px;">
+          <span class="demo-tag" style="margin-bottom:10px; display:inline-block;">시연용 PIP 플레이어 모드</span>
+          <h1 id="playerTitle" class="section-title" style="margin-bottom:6px;">작품 로딩 중...</h1>
+          <p id="playerMeta" style="color:var(--accent-lavender); font-size:14px;"></p>
+        </div>
+
+        <div class="demo-workspace">
+          <!-- 시네마틱 플레이어 영역 -->
+          <div class="demo-player-screen" id="playerScreenBg" style="height:460px;">
+            <div class="demo-screen-header">
+              <span>비파괴 수어 오버레이 동기화 중</span>
+              <span class="badge-live">● KSL 실시간 통역 활성</span>
+            </div>
+
+            <div class="demo-caption-bar">
+              <p id="playerDialogue">“대사 자막이 여기에 표시됩니다.”</p>
+              <span id="playerGloss">[수어] 타임코드 동기화 대기</span>
+            </div>
+
+            <div class="pip-widget demo-pip pos-bottom-right" id="liveDemoPip">
+              <div class="pip-label">
+                <span>MoA PIP</span>
+                <span id="demoPipSpeedBadge">1.0x</span>
+              </div>
+              <div class="avatar-figure">
+                <div class="avatar-silhouette">
+                  <div class="av-head"></div>
+                  <div class="av-body"></div>
+                  <div class="av-hand left"></div>
+                  <div class="av-hand right"></div>
+                </div>
+              </div>
+              <div class="pip-gloss">수어 아바타 작동 중</div>
+            </div>
+          </div>
+
+          <!-- 우측 컨트롤 패널 -->
+          <div class="demo-control-panel">
+            <div>
+              <h3 style="font-size:18px; margin-bottom:6px;">아바타 오버레이 설정</h3>
+              <p id="playerSummary" style="font-size:13px; color:var(--text-secondary); margin-bottom:22px;"></p>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <strong>수어 아바타 표시</strong>
+                  <button type="button" class="toggle-switch" id="demoPipToggle">아바타 ON</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <label for="demoScaleRange">아바타 크기</label>
+                  <strong id="demoScaleLabel">100%</strong>
+                </div>
+                <input type="range" id="demoScaleRange" min="75" max="135" value="100" />
+              </div>
+
+              <div class="control-group">
+                <div class="control-row"><span>아바타 위치</span></div>
+                <div class="pos-selector">
+                  <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
+                  <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
+                  <button type="button" class="pos-btn" data-pos="bottom-left">좌측 하단</button>
+                  <button type="button" class="pos-btn active" data-pos="bottom-right">우측 하단</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <label for="demoSpeedRange">싱크 속도</label>
+                  <strong id="demoSpeedLabel">1.0x</strong>
+                </div>
+                <input type="range" id="demoSpeedRange" min="0.8" max="1.4" step="0.1" value="1.0" />
+              </div>
+            </div>
+
+            <div>
+              <button type="button" class="btn btn-primary" style="width:100%;" id="demoSavePrefsBtn">
+                내 PIP 설정 저장하기
+              </button>
+              <p id="demoSaveStatus" style="font-size:12px; color:var(--accent-lavender); margin-top:10px; min-height:18px;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
