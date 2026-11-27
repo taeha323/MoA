@@ -1,6 +1,6 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127: 아바타·배경 불투명도 분리 제어) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127_2: 심플 일체형 아바타 + 자유 드래그 이동) */
 (function () {
-  const PREFS_KEY = 'moa_pip_prefs_v2';
+  const PREFS_KEY = 'moa_pip_prefs_v3';
   const SUB_KEY = 'moa_pass_subscribed';
   const PROFILE_KEY = 'moa_user_profile_v1';
   const POSTS_KEY = 'moa_community_posts_v1';
@@ -63,6 +63,8 @@
     opacity: 95,
     bgOpacity: 75,
     position: 'bottom-right',
+    customX: null,
+    customY: null,
     speed: 1.0
   };
 
@@ -94,47 +96,43 @@
     });
   }
 
-  /* 디테일한 인체 비례 + 표정 변화 + 일체형 미튼 핸드 수어 아바타 SVG */
-  function buildRealisticAvatarSVG(charKey, mood) {
+  /* 심플하고 매끄러운 일체형 아바타 SVG (팔·손목·손이 하나로 이어져 절대 끊기지 않음) */
+  function buildSimpleAvatarSVG(charKey, mood) {
     const c = AVATAR_META[charKey] || AVATAR_META.moa;
     const m = mood || 'smile';
 
     const browLeft = m === 'focus'
-      ? 'M 81 36 Q 87 38 93 37'
+      ? 'M 82 36 Q 87 38 93 37'
       : m === 'emphasis'
-        ? 'M 81 34 Q 87 31 93 35'
-        : 'M 81 36 Q 87 33 93 35';
+        ? 'M 82 34 Q 87 31 93 35'
+        : 'M 82 36 Q 87 33.5 93 35.5';
 
     const browRight = m === 'focus'
-      ? 'M 107 37 Q 113 38 119 36'
+      ? 'M 107 37 Q 113 38 118 36'
       : m === 'emphasis'
-        ? 'M 107 35 Q 113 31 119 34'
-        : 'M 107 35 Q 113 33 119 36';
+        ? 'M 107 35 Q 113 31 118 34'
+        : 'M 107 35.5 Q 113 33.5 118 36';
 
     const mouthPath = m === 'emphasis'
-      ? '<ellipse cx="100" cy="60" rx="4.8" ry="3.4" fill="#9f4a54"/><path d="M 96 59 Q 100 57.6 104 59" stroke="#ffffff" stroke-width="1.2" fill="none"/>'
+      ? '<ellipse cx="100" cy="59.5" rx="4.4" ry="3.2" fill="#9f4a54"/>'
       : m === 'focus'
-        ? '<path d="M 94 59.5 Q 100 60.5 106 59.5" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
-        : '<path d="M 93.5 58.5 Q 100 64 106.5 58.5" stroke="#b45362" stroke-width="2.1" stroke-linecap="round" fill="none"/><path d="M 95.5 59.3 Q 100 62 104.5 59.3" fill="#ffffff" opacity="0.8"/>';
+        ? '<path d="M 94.5 59 Q 100 60.2 105.5 59" stroke="#b05c65" stroke-width="2" stroke-linecap="round" fill="none"/>'
+        : '<path d="M 94 58 Q 100 63.2 106 58" stroke="#b45362" stroke-width="2.1" stroke-linecap="round" fill="none"/>';
 
     const hairBackSvg = c.hairStyle === 'long'
-      ? `<path d="M 71 38 C 66 64 68 88 75 96 L 125 96 C 132 88 134 64 129 38 Z" fill="${c.hairBack}"/>`
+      ? `<path d="M 72 38 C 67 64 69 86 76 94 L 124 94 C 131 86 133 64 128 38 Z" fill="${c.hairBack}"/>`
       : c.hairStyle === 'bob'
-        ? `<path d="M 73 38 C 70 55 72 68 78 74 L 122 74 C 128 68 130 55 127 38 Z" fill="${c.hairBack}"/>`
+        ? `<path d="M 74 38 C 71 54 73 67 79 73 L 121 73 C 127 67 129 54 126 38 Z" fill="${c.hairBack}"/>`
         : '';
 
     const hairFrontSvg = c.hairStyle === 'short'
-      ? `<path d="M 77 41 C 76 23 88 17 100 17 C 112 17 124 23 123 41 C 120 30 111 27 102 29 C 93 31 84 28 77 41 Z" fill="${c.hair}"/>`
+      ? `<path d="M 78 41 C 77 23 88 18 100 18 C 112 18 123 23 122 41 C 119 30 111 28 102 29.5 C 93 31 85 28 78 41 Z" fill="${c.hair}"/>`
       : c.hairStyle === 'sleek'
-        ? `<path d="M 77 42 C 76 21 89 16 100 16 C 111 16 124 21 123 42 C 118 27 106 25 100 25 C 94 25 82 27 77 42 Z" fill="${c.hair}"/>`
-        : `<path d="M 76 44 C 74 22 88 16 100 16 C 112 16 126 22 124 44 C 121 30 112 27 103 30 C 95 33 85 29 76 44 Z" fill="${c.hair}"/>`;
-
-    const shoulderPath = c.hairStyle === 'short'
-      ? 'M 42 154 C 44 106 60 85 83 82 L 117 82 C 140 85 156 106 158 154 Z'
-      : 'M 48 154 C 50 108 64 87 85 83 L 115 83 C 136 87 150 108 152 154 Z';
+        ? `<path d="M 78 42 C 77 21 89 17 100 17 C 111 17 123 21 122 42 C 117 27 106 25.5 100 25.5 C 94 25.5 83 27 78 42 Z" fill="${c.hair}"/>`
+        : `<path d="M 77 43 C 75 22 88 17 100 17 C 112 17 125 22 123 43 C 120 30 112 27.5 103 30 C 95 32.5 86 29 77 43 Z" fill="${c.hair}"/>`;
 
     return `
-      <svg class="human-avatar-svg" viewBox="0 0 200 162" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <svg class="human-avatar-svg" viewBox="0 0 200 156" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
           <linearGradient id="skinGrad_${charKey}" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="${c.skin}"/>
@@ -146,67 +144,54 @@
           </linearGradient>
         </defs>
 
-        <!-- 뒷머리 레이어 -->
+        <!-- 뒷머리 -->
         ${hairBackSvg}
 
-        <!-- 상반신 & 의상 디테일 -->
-        <g class="av-torso-group">
-          <path d="${shoulderPath}" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.16)" stroke-width="1.2"/>
-          <!-- 자켓 라펠 & 이너 V넥 -->
-          <path d="M 85 83 L 100 106 L 115 83 L 108 82 L 100 95 L 92 82 Z" fill="${c.outfitAccent}" opacity="0.92"/>
-          <path d="M 79 84 L 94 114 L 100 106 L 86 83 Z" fill="rgba(255,255,255,0.08)"/>
-          <path d="M 121 84 L 106 114 L 100 106 L 114 83 Z" fill="rgba(255,255,255,0.08)"/>
-          <!-- 목 & 음영 -->
-          <path d="M 91.5 68 L 91.5 85 Q 100 91 108.5 85 L 108.5 68 Z" fill="url(#skinGrad_${charKey})"/>
-          <path d="M 91.5 69 Q 100 74.5 108.5 69 L 108.5 75 Q 100 79 91.5 75 Z" fill="${c.skinShadow}" opacity="0.5"/>
+        <!-- 상반신 (고정 몸통) -->
+        <g>
+          <path d="M 52 156 C 54 108 67 87 86 83 L 114 83 C 133 87 146 108 148 156 Z" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.14)" stroke-width="1.2"/>
+          <!-- 심플 V넥 포인트 -->
+          <path d="M 86 83 L 100 105 L 114 83 L 107 82.5 L 100 94 L 93 82.5 Z" fill="${c.outfitAccent}" opacity="0.9"/>
+          <!-- 목 -->
+          <path d="M 92 67 L 92 84 Q 100 90 108 84 L 108 67 Z" fill="url(#skinGrad_${charKey})"/>
         </g>
 
-        <!-- 얼굴 & 표정 -->
+        <!-- 얼굴 -->
         <g class="av-head-group">
-          <ellipse cx="77" cy="47" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
-          <ellipse cx="123" cy="47" rx="3.2" ry="5.5" fill="${c.skinShadow}"/>
-          <path d="M 78 37 C 78 22 122 22 122 37 C 122 55 113 70 100 71 C 87 70 78 55 78 37 Z" fill="url(#skinGrad_${charKey})"/>
-          <ellipse cx="85" cy="52" rx="5" ry="2.8" fill="${c.blush}"/>
-          <ellipse cx="115" cy="52" rx="5" ry="2.8" fill="${c.blush}"/>
+          <path d="M 79 37 C 79 22 121 22 121 37 C 121 54 112 69 100 70 C 88 69 79 54 79 37 Z" fill="url(#skinGrad_${charKey})"/>
+          <ellipse cx="86" cy="51.5" rx="4.6" ry="2.6" fill="${c.blush}"/>
+          <ellipse cx="114" cy="51.5" rx="4.6" ry="2.6" fill="${c.blush}"/>
 
-          <path d="${browLeft}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <path d="${browRight}" stroke="${c.hair}" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="${browLeft}" stroke="${c.hair}" stroke-width="1.9" stroke-linecap="round" fill="none"/>
+          <path d="${browRight}" stroke="${c.hair}" stroke-width="1.9" stroke-linecap="round" fill="none"/>
 
           <g class="av-eyelids">
-            <ellipse cx="88" cy="44" rx="4.4" ry="3.1" fill="#ffffff"/>
-            <circle cx="88.3" cy="44" r="2.3" fill="#1e293b"/>
-            <circle cx="89.1" cy="43.1" r="0.8" fill="#ffffff"/>
-            <path d="M 83.4 43.3 Q 88 40.2 92.6 43.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-
-            <ellipse cx="112" cy="44" rx="4.4" ry="3.1" fill="#ffffff"/>
-            <circle cx="111.7" cy="44" r="2.3" fill="#1e293b"/>
-            <circle cx="112.5" cy="43.1" r="0.8" fill="#ffffff"/>
-            <path d="M 107.4 43.3 Q 112 40.2 116.6 43.3" stroke="#1e293b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <circle cx="88.5" cy="44" r="2.7" fill="#1e293b"/>
+            <circle cx="89.4" cy="43.1" r="0.9" fill="#ffffff"/>
+            <circle cx="111.5" cy="44" r="2.7" fill="#1e293b"/>
+            <circle cx="112.4" cy="43.1" r="0.9" fill="#ffffff"/>
           </g>
 
-          <path d="M 100 45 L 98.8 52.5 Q 100 54 101.8 52.8" stroke="${c.skinShadow}" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          <path d="M 100 45 L 99 52 Q 100 53.2 101.4 52.2" stroke="${c.skinShadow}" stroke-width="1.4" stroke-linecap="round" fill="none"/>
           ${mouthPath}
           ${hairFrontSvg}
         </g>
 
-        <!-- 왼팔 & 일체형 수어 핸드 -->
-        <g class="av-arm-left">
-          <path d="M 55 96 C 47 115 49 135 57 154 L 74 154 C 68 136 68 121 73 111 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-          <path d="M 58 113 L 72 110 L 73 114 L 58 117 Z" fill="${c.outfitAccent}" opacity="0.85"/>
-          <g class="av-hand-left">
-            <path d="M 59 114 L 59 102 C 59 95 72 95 72 102 L 72 106 C 75.5 104 79 106.5 78 110 C 77 113 73.5 114.5 71 115 L 70 119 L 60 119 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1.1" stroke-linejoin="round"/>
-            <path d="M 63.5 98 L 63.5 105 M 67.5 98 L 67.5 105" stroke="${c.skinShadow}" stroke-width="0.9" stroke-linecap="round" opacity="0.65"/>
-          </g>
+        <!-- 왼팔+왼손 일체형 (한 덩어리로 움직여 손목이 절대 끊기지 않음) -->
+        <g class="av-limb-left">
+          <!-- 심플 미튼 핸드 (팔목 안쪽에서 자연스럽게 이어짐) -->
+          <path d="M 67 115 L 67 103 C 67 96 79 96 79 103 L 79 107 C 82 105.5 85 107.5 84 111 C 83 113.5 80 115 78 115.5 L 78 121 L 67 121 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1"/>
+          <!-- 팔목 커프스 링 -->
+          <rect x="65.5" y="117" width="15" height="4" rx="2" fill="${c.outfitAccent}"/>
+          <!-- 소매 (하단 몸통까지 깊게 연결되어 회전해도 빈틈 없음) -->
+          <path d="M 65.5 120 L 80.5 120 L 83 162 L 62 162 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
         </g>
 
-        <!-- 오른팔 & 일체형 수어 핸드 -->
-        <g class="av-arm-right">
-          <path d="M 145 96 C 153 115 151 135 143 154 L 126 154 C 132 136 132 121 127 111 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-          <path d="M 142 110 L 128 107 L 127 111 L 142 114 Z" fill="${c.outfitAccent}" opacity="0.85"/>
-          <g class="av-hand-right">
-            <path d="M 141 111 L 141 99 C 141 92 128 92 128 99 L 128 103 C 124.5 101 121 103.5 122 107 C 123 110 126.5 111.5 129 112 L 130 116 L 140 116 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1.1" stroke-linejoin="round"/>
-            <path d="M 136.5 95 L 136.5 102 M 132.5 95 L 132.5 102" stroke="${c.skinShadow}" stroke-width="0.9" stroke-linecap="round" opacity="0.65"/>
-          </g>
+        <!-- 오른팔+오른손 일체형 (한 덩어리로 움직여 손목이 절대 끊기지 않음) -->
+        <g class="av-limb-right">
+          <path d="M 133 112 L 133 100 C 133 93 121 93 121 100 L 121 104 C 118 102.5 115 104.5 116 108 C 117 110.5 120 112 122 112.5 L 122 118 L 133 118 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1"/>
+          <rect x="119.5" y="114" width="15" height="4" rx="2" fill="${c.outfitAccent}"/>
+          <path d="M 119.5 117 L 134.5 117 L 138 162 L 117 162 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
         </g>
       </svg>
     `;
@@ -219,11 +204,11 @@
     pipEl.classList.add(`char-${key}`);
     const fig = pipEl.querySelector('.avatar-figure');
     if (fig) {
-      fig.innerHTML = buildRealisticAvatarSVG(key, mood || 'smile');
+      fig.innerHTML = buildSimpleAvatarSVG(key, mood || 'smile');
     }
   }
 
-  /* 1. 메인 홈 (index.html): 4초 롤링 히어로 + 필터/검색 카탈로그 */
+  /* 1. 메인 홈 (index.html) */
   function initHome() {
     const grid = document.getElementById('catalogPageGrid');
     const heroBg = document.getElementById('heroBg');
@@ -375,7 +360,7 @@
     renderGrid();
   }
 
-  /* 2. PIP 플레이어 (player.html) — 아바타 & 배경 불투명도 독립 제어 */
+  /* 2. PIP 플레이어 (player.html) — 자유 드래그 배치 + 불투명도 분리 제어 */
   function initPlayer() {
     const root = document.getElementById('playerPageRoot');
     if (!root) return;
@@ -390,7 +375,7 @@
     const metaEl = document.getElementById('playerMeta');
     const summaryEl = document.getElementById('playerSummary');
     const videoEl = document.getElementById('demoVideoEl');
-    const screenBox = videoEl ? videoEl.parentElement : null;
+    const screenBox = document.getElementById('demoPlayerScreen') || (videoEl ? videoEl.parentElement : null);
     const playPauseBtn = document.getElementById('videoPlayPauseBtn');
     const seekBar = document.getElementById('videoSeekBar');
     const timeText = document.getElementById('videoTimeText');
@@ -405,6 +390,7 @@
     if (prefs.bgOpacity === undefined) prefs.bgOpacity = 75;
     if (prefs.opacity === undefined) prefs.opacity = 95;
     let currentMood = 'smile';
+    let suppressNextScreenClick = false;
 
     const pipBox = document.getElementById('liveDemoPip');
     const pipToggle = document.getElementById('demoPipToggle');
@@ -425,8 +411,22 @@
     function applyPipStyles(forceRebuildAvatar) {
       if (!pipBox) return;
       pipBox.classList.toggle('is-hidden', !prefs.enabled);
-      pipBox.classList.remove('pos-top-left', 'pos-top-right', 'pos-bottom-left', 'pos-bottom-right');
-      pipBox.classList.add(`pos-${prefs.position}`);
+      pipBox.classList.remove('pos-top-left', 'pos-top-right', 'pos-bottom-left', 'pos-bottom-right', 'pos-custom');
+
+      if (prefs.position === 'custom' && typeof prefs.customX === 'number' && typeof prefs.customY === 'number') {
+        pipBox.classList.add('pos-custom');
+        pipBox.style.left = `${prefs.customX}px`;
+        pipBox.style.top = `${prefs.customY}px`;
+        pipBox.style.right = 'auto';
+        pipBox.style.bottom = 'auto';
+      } else {
+        pipBox.style.left = '';
+        pipBox.style.top = '';
+        pipBox.style.right = '';
+        pipBox.style.bottom = '';
+        pipBox.classList.add(`pos-${prefs.position || 'bottom-right'}`);
+      }
+
       pipBox.style.transform = `scale(${prefs.scale / 100})`;
       pipBox.style.setProperty('--pip-avatar-alpha', String((prefs.opacity ?? 95) / 100));
       pipBox.style.setProperty('--pip-bg-alpha', String((prefs.bgOpacity ?? 75) / 100));
@@ -459,6 +459,66 @@
 
       posBtns.forEach((btn) => {
         btn.classList.toggle('active', btn.getAttribute('data-pos') === prefs.position);
+      });
+    }
+
+    /* 자유 드래그 이동 (Pointer Events: 마우스 & 터치 모두 지원) */
+    if (pipBox && screenBox) {
+      let dragging = false;
+      let startClientX = 0;
+      let startClientY = 0;
+      let startLeft = 0;
+      let startTop = 0;
+      let movedDistance = 0;
+
+      pipBox.addEventListener('pointerdown', (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        e.stopPropagation();
+
+        const screenRect = screenBox.getBoundingClientRect();
+        const pipRect = pipBox.getBoundingClientRect();
+
+        startClientX = e.clientX;
+        startClientY = e.clientY;
+        startLeft = pipRect.left - screenRect.left;
+        startTop = pipRect.top - screenRect.top;
+        movedDistance = 0;
+        dragging = true;
+
+        pipBox.classList.add('is-dragging');
+        if (pipBox.setPointerCapture) {
+          try { pipBox.setPointerCapture(e.pointerId); } catch (err) {}
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startClientX;
+        const dy = e.clientY - startClientY;
+        movedDistance = Math.hypot(dx, dy);
+
+        const maxLeft = Math.max(0, screenBox.clientWidth - pipBox.offsetWidth);
+        const maxTop = Math.max(0, screenBox.clientHeight - pipBox.offsetHeight);
+
+        const nextLeft = Math.min(Math.max(0, startLeft + dx), maxLeft);
+        const nextTop = Math.min(Math.max(0, startTop + dy), maxTop);
+
+        prefs.position = 'custom';
+        prefs.customX = Math.round(nextLeft);
+        prefs.customY = Math.round(nextTop);
+        applyPipStyles(false);
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        pipBox.classList.remove('is-dragging');
+        if (pipBox.releasePointerCapture) {
+          try { pipBox.releasePointerCapture(e.pointerId); } catch (err) {}
+        }
+        if (movedDistance > 4) {
+          suppressNextScreenClick = true;
+        }
       });
     }
 
@@ -501,13 +561,15 @@
     posBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         prefs.position = btn.getAttribute('data-pos') || 'bottom-right';
+        prefs.customX = null;
+        prefs.customY = null;
         applyPipStyles(false);
       });
     });
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
         savePrefs(prefs);
-        if (saveStatus) saveStatus.textContent = '✓ 캐릭터 및 수어 PIP 설정이 기본값으로 저장되었습니다.';
+        if (saveStatus) saveStatus.textContent = '✓ 캐릭터 및 수어 PIP 위치·설정값이 저장되었습니다.';
       });
     }
 
@@ -604,7 +666,13 @@
 
       tryLoadVideo(0);
 
-      const togglePlay = () => {
+      const togglePlay = (e) => {
+        if (suppressNextScreenClick) {
+          suppressNextScreenClick = false;
+          return;
+        }
+        if (e && pipBox && pipBox.contains(e.target)) return;
+
         if (usingSimTimer) {
           simPlaying = !simPlaying;
           if (playPauseBtn) playPauseBtn.textContent = simPlaying ? '❚❚ 일시정지' : '▶ 재생';
@@ -801,7 +869,7 @@
     if (charInput) charInput.value = prefs.character || 'moa';
     if (scaleInput) scaleInput.value = String(prefs.scale);
     if (opacityInput) opacityInput.value = String(prefs.opacity);
-    if (posInput) posInput.value = prefs.position;
+    if (posInput) posInput.value = prefs.position === 'custom' ? 'bottom-right' : prefs.position;
     if (speedInput) speedInput.value = String(prefs.speed);
 
     if (form) {
@@ -820,6 +888,8 @@
           scale: Number(scaleInput ? scaleInput.value : 100) || 100,
           opacity: Number(opacityInput ? opacityInput.value : 95) || 95,
           position: (posInput ? posInput.value : 'bottom-right') || 'bottom-right',
+          customX: null,
+          customY: null,
           speed: Number(speedInput ? speedInput.value : 1.0) || 1.0
         }));
 
