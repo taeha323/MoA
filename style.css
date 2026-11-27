@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System (v20261127: 아바타·배경 불투명도 독립 제어) */
+/* style.css — MoA Cinematic OTT Design System (v20261127_2: 심플 일체형 아바타 + 자유 드래그 PIP) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -53,7 +53,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   transform: translateY(0);
 }
 
-/* 상단 내비게이션 & 선명한 MoA 루프 로고 */
+/* 상단 내비게이션 & MoA 루프 로고 */
 .site-header {
   position: fixed;
   top: 0;
@@ -276,22 +276,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 /* =========================================================
-   몰입형 수어 아바타 PIP 위젯
-   - 텍스트 완전 제거
-   - 배경 불투명도(--pip-bg-alpha)와 아바타 불투명도(--pip-avatar-alpha) 완전 분리
+   몰입형 심플 수어 아바타 PIP 위젯
+   - 문구 완전 제거
+   - 배경 불투명도(--pip-bg-alpha)와 아바타 불투명도(--pip-avatar-alpha) 분리
+   - 관절 분리 없는 일체형 심플 캐릭터 + 자유 드래그 지원
    ========================================================= */
 .pip-widget {
   --pip-bg-alpha: 0.72;
   --pip-avatar-alpha: 0.95;
-  width: 196px;
+  width: 184px;
   background: rgba(11, 15, 26, var(--pip-bg-alpha));
   backdrop-filter: blur(calc(12px * var(--pip-bg-alpha)));
   -webkit-backdrop-filter: blur(calc(12px * var(--pip-bg-alpha)));
-  border: 1.5px solid rgba(167, 139, 250, calc(0.65 * var(--pip-bg-alpha)));
+  border: 1.5px solid rgba(167, 139, 250, calc(0.62 * var(--pip-bg-alpha)));
   border-radius: var(--radius-md);
   padding: 6px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, calc(0.55 * var(--pip-bg-alpha)));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, calc(0.5 * var(--pip-bg-alpha)));
   text-align: center;
+  user-select: none;
+  touch-action: none;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -300,117 +303,103 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   display: none !important;
 }
 
+.demo-pip {
+  position: absolute;
+  cursor: grab;
+  transition: transform 0.2s ease, top 0.25s ease, bottom 0.25s ease, left 0.25s ease, right 0.25s ease;
+}
+
+.demo-pip.is-dragging {
+  cursor: grabbing;
+  transition: none !important;
+  box-shadow: 0 22px 48px rgba(167, 139, 250, 0.38);
+}
+
+.demo-pip.pos-bottom-right { right: 20px; bottom: 56px; transform-origin: bottom right; }
+.demo-pip.pos-bottom-left  { left: 20px;  bottom: 56px; transform-origin: bottom left; }
+.demo-pip.pos-top-right    { right: 20px; top: 54px;    transform-origin: top right; }
+.demo-pip.pos-top-left     { left: 20px;  top: 54px;    transform-origin: top left; }
+.demo-pip.pos-custom       { transform-origin: center center; }
+.demo-pip.is-hidden        { display: none !important; }
+
 .avatar-figure {
-  height: 164px;
+  height: 158px;
   border-radius: 10px;
   background: transparent;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   opacity: var(--pip-avatar-alpha);
   transition: opacity 0.15s ease;
+  pointer-events: none;
 }
 
 .human-avatar-svg {
-  width: 184px;
-  height: 162px;
+  width: 172px;
+  height: 156px;
   display: block;
-  overflow: visible;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.4));
 }
 
-/* 고개·상체 자연 호흡 및 시선 끄덕임 */
+/* 고개·눈 깜빡임 */
 .av-head-group {
-  transform-origin: 100px 68px;
-  animation: headExpressive 3.6s infinite ease-in-out;
+  transform-origin: 100px 66px;
+  animation: simpleHeadNod 3.8s infinite ease-in-out;
 }
 
-.av-torso-group {
-  transform-origin: 100px 154px;
-  animation: torsoBreath 3.6s infinite ease-in-out;
-}
-
-/* 눈 깜빡임 */
 .av-eyelids {
   transform-origin: 100px 44px;
-  animation: eyeBlink 4.4s infinite;
+  animation: simpleBlink 4.6s infinite;
 }
 
-/* 왼팔·왼손 수어 궤적 */
-.av-arm-left {
-  transform-origin: 64px 96px;
-  animation: kslLeftArm 2.4s infinite ease-in-out;
-}
-.av-hand-left {
-  transform-origin: 65px 118px;
-  animation: kslLeftWrist 2.4s infinite ease-in-out;
+/* 일체형 팔·손 부드러운 제스처 (절대 분리되지 않는 단일 피벗 회전) */
+.av-limb-left {
+  transform-origin: 72px 142px;
+  animation: simpleLeftGesture 2.6s infinite ease-in-out;
 }
 
-/* 오른팔·오른손 수어 궤적 */
-.av-arm-right {
-  transform-origin: 136px 96px;
-  animation: kslRightArm 2.4s infinite ease-in-out;
-}
-.av-hand-right {
-  transform-origin: 135px 115px;
-  animation: kslRightWrist 2.4s infinite ease-in-out;
+.av-limb-right {
+  transform-origin: 128px 142px;
+  animation: simpleRightGesture 2.6s infinite ease-in-out;
 }
 
-@keyframes headExpressive {
+@keyframes simpleHeadNod {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-1.8deg); }
+  70% { transform: rotate(1.8deg); }
+}
+
+@keyframes simpleBlink {
+  0%, 46%, 50%, 94%, 98%, 100% { transform: scaleY(1); }
+  48%, 96% { transform: scaleY(0.08); }
+}
+
+@keyframes simpleLeftGesture {
   0%, 100% { transform: rotate(0deg) translateY(0px); }
-  25% { transform: rotate(-2.2deg) translateY(1.2px); }
-  55% { transform: rotate(1.8deg) translateY(-1px); }
-  80% { transform: rotate(-0.8deg) translateY(0.8px); }
+  35% { transform: rotate(7deg) translateY(-6px); }
+  70% { transform: rotate(-4deg) translateY(-3px); }
 }
 
-@keyframes torsoBreath {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(1.012); }
+@keyframes simpleRightGesture {
+  0%, 100% { transform: rotate(0deg) translateY(0px); }
+  35% { transform: rotate(-8deg) translateY(-8px); }
+  70% { transform: rotate(4deg) translateY(-4px); }
 }
 
-@keyframes eyeBlink {
-  0%, 45%, 49%, 92%, 96%, 100% { transform: scaleY(1); }
-  47%, 94% { transform: scaleY(0.08); }
-}
-
-@keyframes kslLeftArm {
-  0%, 100% { transform: rotate(0deg) translate(0px, 0px); }
-  33% { transform: rotate(-10deg) translate(5px, -10px); }
-  66% { transform: rotate(5deg) translate(10px, -5px); }
-}
-
-@keyframes kslLeftWrist {
-  0%, 100% { transform: rotate(0deg); }
-  33% { transform: rotate(12deg); }
-  66% { transform: rotate(-8deg); }
-}
-
-@keyframes kslRightArm {
-  0%, 100% { transform: rotate(0deg) translate(0px, 0px); }
-  33% { transform: rotate(12deg) translate(-6px, -13px); }
-  66% { transform: rotate(-6deg) translate(-11px, -7px); }
-}
-
-@keyframes kslRightWrist {
-  0%, 100% { transform: rotate(0deg); }
-  33% { transform: rotate(-14deg); }
-  66% { transform: rotate(10deg); }
-}
-
-/* 캐릭터 4종 테두리 컬러 (배경 불투명도에 비례) */
+/* 캐릭터 4종 테두리 컬러 */
 .pip-widget.char-moa {
-  border-color: rgba(167, 139, 250, calc(0.68 * var(--pip-bg-alpha)));
+  border-color: rgba(167, 139, 250, calc(0.65 * var(--pip-bg-alpha)));
 }
 .pip-widget.char-seoyeon {
-  border-color: rgba(244, 114, 182, calc(0.68 * var(--pip-bg-alpha)));
+  border-color: rgba(244, 114, 182, calc(0.65 * var(--pip-bg-alpha)));
 }
 .pip-widget.char-dohyun {
-  border-color: rgba(52, 211, 153, calc(0.68 * var(--pip-bg-alpha)));
+  border-color: rgba(52, 211, 153, calc(0.65 * var(--pip-bg-alpha)));
 }
 .pip-widget.char-nova {
-  border-color: rgba(226, 232, 240, calc(0.68 * var(--pip-bg-alpha)));
+  border-color: rgba(226, 232, 240, calc(0.65 * var(--pip-bg-alpha)));
 }
 
 /* 섹션 공통 */
@@ -611,7 +600,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--text-secondary);
 }
 
-/* 좌우 양쪽 사이드 광고 슬롯 레이아웃 — 테두리 1px 빛샘 없는 풀블리드 포스터 배너 */
+/* 좌우 양쪽 사이드 광고 슬롯 레이아웃 */
 .catalog-with-ads {
   max-width: 1680px;
   margin: 0 auto;
@@ -754,6 +743,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
+  pointer-events: none;
 }
 
 .badge-live {
@@ -771,20 +761,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 12px 16px;
   border-radius: var(--radius-sm);
   max-width: 68%;
+  pointer-events: none;
 }
 
 .demo-caption-bar p { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
 .demo-caption-bar span { font-size: 12px; color: var(--accent-lavender); }
-
-.demo-pip {
-  position: absolute;
-  transition: transform 0.25s ease, top 0.25s ease, bottom 0.25s ease, left 0.25s ease, right 0.25s ease;
-}
-.demo-pip.pos-bottom-right { right: 20px; bottom: 56px; transform-origin: bottom right; }
-.demo-pip.pos-bottom-left  { left: 20px;  bottom: 56px; transform-origin: bottom left; }
-.demo-pip.pos-top-right    { right: 20px; top: 54px;    transform-origin: top right; }
-.demo-pip.pos-top-left     { left: 20px;  top: 54px;    transform-origin: top left; }
-.demo-pip.is-hidden        { display: none !important; }
 
 .demo-control-panel {
   display: flex;
