@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System (안정화 최종본) */
+/* style.css — MoA Cinematic OTT Design System (아바타 캐릭터 4종 통합본) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -48,7 +48,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 0 28px;
 }
 
-/* 기본 노출 보장 (빈 화면 방지) */
 .reveal {
   opacity: 1;
   transform: translateY(0);
@@ -276,9 +275,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--accent-lavender);
 }
 
-/* 아바타 PIP 위젯 */
+/* 아바타 PIP 위젯 & 캐릭터 4종 테마 */
 .pip-widget {
-  width: 176px;
+  width: 184px;
   background: rgba(13, 18, 31, 0.92);
   backdrop-filter: blur(12px);
   border: 1.5px solid var(--accent-lavender);
@@ -286,6 +285,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 12px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
   text-align: center;
+  transition: border-color 0.25s ease, background 0.25s ease;
 }
 
 .pip-label {
@@ -298,7 +298,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .avatar-figure {
-  height: 92px;
+  height: 94px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -306,16 +306,32 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 .avatar-silhouette {
   position: relative;
-  width: 58px;
-  height: 78px;
+  width: 62px;
+  height: 80px;
+}
+
+.av-hair {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 16px;
+  border-radius: 14px 14px 4px 4px;
+  background: #334155;
+  z-index: 2;
+  transition: all 0.25s ease;
 }
 
 .av-head {
+  position: relative;
+  z-index: 1;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #e2e8f0;
-  margin: 0 auto 6px;
+  background: #f1f5f9;
+  margin: 2px auto 6px;
+  transition: background 0.25s ease;
 }
 
 .av-body {
@@ -324,6 +340,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   border-radius: 14px 14px 6px 6px;
   background: var(--accent-gradient);
   margin: 0 auto;
+  transition: all 0.25s ease;
 }
 
 .av-hand {
@@ -333,10 +350,57 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: #f8fafc;
   position: absolute;
   top: 34px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .av-hand.left { left: 0; animation: signGestureL 1.6s infinite ease-in-out; }
 .av-hand.right { right: 0; animation: signGestureR 1.6s infinite ease-in-out; }
+
+/* 캐릭터 1: 모아 (기본 블루·라벤더) */
+.pip-widget.char-moa { border-color: #a78bfa; }
+.pip-widget.char-moa .pip-label { color: #a78bfa; }
+.pip-widget.char-moa .av-body { background: linear-gradient(135deg, #3b82f6 0%, #a78bfa 100%); }
+
+/* 캐릭터 2: 서연 (감성 로즈·코랄, 긴 헤어 실루엣) */
+.pip-widget.char-seoyeon { border-color: #f472b6; }
+.pip-widget.char-seoyeon .pip-label { color: #f9a8d4; }
+.pip-widget.char-seoyeon .av-hair {
+  width: 34px;
+  height: 30px;
+  border-radius: 16px 16px 8px 8px;
+  background: #4c1d95;
+  z-index: 0;
+}
+.pip-widget.char-seoyeon .av-head { background: #ffe4e6; }
+.pip-widget.char-seoyeon .av-body {
+  width: 38px;
+  border-radius: 16px 16px 8px 8px;
+  background: linear-gradient(135deg, #ec4899 0%, #fb7185 100%);
+}
+
+/* 캐릭터 3: 도현 (에메랄드·시안, 넓은 숄더 라인) */
+.pip-widget.char-dohyun { border-color: #34d399; }
+.pip-widget.char-dohyun .pip-label { color: #6ee7b7; }
+.pip-widget.char-dohyun .av-hair {
+  width: 26px;
+  height: 11px;
+  background: #0f172a;
+}
+.pip-widget.char-dohyun .av-head { background: #e2e8f0; }
+.pip-widget.char-dohyun .av-body {
+  width: 48px;
+  border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(135deg, #059669 0%, #06b6d4 100%);
+}
+
+/* 캐릭터 4: 노바 (고대비 미니멀 모노크롬) */
+.pip-widget.char-nova { border-color: #e2e8f0; background: rgba(7, 9, 15, 0.95); }
+.pip-widget.char-nova .pip-label { color: #f8fafc; }
+.pip-widget.char-nova .av-hair { display: none; }
+.pip-widget.char-nova .av-head { background: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.45); }
+.pip-widget.char-nova .av-body {
+  background: linear-gradient(180deg, #e2e8f0 0%, #64748b 100%);
+}
 
 @keyframes signGestureL {
   0%, 100% { transform: translate(0, 0); }
@@ -653,7 +717,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 .demo-player-screen {
   position: relative;
-  height: 450px;
+  height: 465px;
   border-radius: var(--radius-md);
   overflow: hidden;
   background-size: cover;
@@ -705,16 +769,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--bg-void);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 22px;
+  padding: 20px;
 }
 
-.control-group { margin-bottom: 18px; }
+.control-group { margin-bottom: 15px; }
 .control-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .control-group input[type="range"] { width: 100%; accent-color: var(--accent-lavender); }
@@ -731,8 +795,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .toggle-switch.off { border-color: var(--border-subtle); background: transparent; color: var(--text-muted); }
 
-.pos-selector { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.pos-btn {
+.pos-selector,
+.char-selector {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.pos-btn,
+.char-btn {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid var(--border-subtle);
@@ -740,12 +811,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--text-secondary);
   font-size: 12px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
-.pos-btn.active {
-  border-color: var(--accent-blue);
-  background: rgba(59, 130, 246, 0.18);
+
+.pos-btn.active,
+.char-btn.active {
+  border-color: var(--accent-lavender);
+  background: rgba(167, 139, 250, 0.2);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* 커뮤니티 게시판 */
@@ -764,10 +838,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   padding: 24px;
 }
 
-.form-field {
-  margin-bottom: 14px;
-}
-
+.form-field { margin-bottom: 14px; }
 .form-field label {
   display: block;
   font-size: 12px;
