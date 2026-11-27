@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MoA — 실시간 수어 PIP 플레이어</title>
-  <link rel="stylesheet" href="style.css?v=20261127" />
+  <link rel="stylesheet" href="style.css?v=20261127_2" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -53,7 +53,7 @@
         <div class="demo-workspace">
           <!-- 좌측 시연 플레이어 화면 -->
           <div style="display:flex; flex-direction:column; gap:12px;">
-            <div class="demo-player-screen" style="background:#05070c; padding:0;">
+            <div class="demo-player-screen" id="demoPlayerScreen" style="background:#05070c; padding:0;">
               <video
                 id="demoVideoEl"
                 playsinline
@@ -68,8 +68,14 @@
                 <span style="background:rgba(7,9,15,0.75); padding:4px 10px; border-radius:6px; color:#e2e8f0;">CC + KSL</span>
               </div>
 
-              <!-- 실시간 수어 아바타 PIP 창 (문구 없이 아바타만 표시) -->
-              <aside class="pip-widget demo-pip pos-bottom-right char-moa" id="liveDemoPip" style="z-index:5;" aria-label="실시간 수어 아바타">
+              <!-- 실시간 수어 아바타 PIP 창 (드래그 이동 가능 + 문구 없는 클린 오버레이) -->
+              <aside
+                class="pip-widget demo-pip pos-bottom-right char-moa"
+                id="liveDemoPip"
+                style="z-index:5;"
+                title="드래그하여 원하는 위치로 이동할 수 있습니다"
+                aria-label="실시간 수어 아바타 (드래그 이동 가능)"
+              >
                 <div class="avatar-figure"></div>
               </aside>
 
@@ -92,7 +98,7 @@
           <div class="demo-control-panel">
             <div>
               <h3 style="font-size:17px; margin-bottom:4px;">수어 아바타 개인화 컨트롤</h3>
-              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px;">아바타와 배경의 불투명도를 각각 조절해 영상 몰입감을 맞춰 보세요.</p>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px;">아바타를 화면에서 직접 드래그하거나 투명도·크기를 자유롭게 조절하세요.</p>
 
               <div class="control-group">
                 <div class="control-row">
@@ -148,7 +154,10 @@
               </div>
 
               <div class="control-group">
-                <div class="control-row"><span>화면 배치 위치</span></div>
+                <div class="control-row">
+                  <span>화면 배치 위치</span>
+                  <span style="font-size:11px; color:var(--text-secondary);">직접 드래그 이동 가능</span>
+                </div>
                 <div class="pos-selector">
                   <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
                   <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
@@ -177,7 +186,7 @@
     </div>
   </footer>
 
-  <script src="supabase.js?v=20261127"></script>
-  <script src="app.js?v=20261127"></script>
+  <script src="supabase.js?v=20261127_2"></script>
+  <script src="app.js?v=20261127_2"></script>
 </body>
 </html>
