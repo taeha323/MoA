@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>소통 커뮤니티 — MoA</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body id="communityPageRoot">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">MoA</span>
+        <span>MoA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">콘텐츠 탐색</a>
+        <a href="player.html?id=1&mode=learn">수어 학습 모드</a>
+        <a href="community.html" class="active">소통 커뮤니티</a>
+        <a href="about.html">서비스 소개</a>
+      </nav>
+      <div class="header-cta">
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어 열기</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding-top: 76px;">
+    <section class="section">
+      <div class="container">
+        <div style="margin-bottom:32px;">
+          <div class="eyebrow">DEAF & LEARNER COMMUNITY</div>
+          <h1 class="section-title">농인과 수어 학습자가 함께하는 소통 라운지</h1>
+          <p class="section-desc">
+            작품 속 수어 표현 질문부터 감상 후기, 수어 스터디 모집까지 자유롭게 이야기를 나눠보세요.
+          </p>
+        </div>
+
+        <div class="filter-group" style="margin-bottom:28px;">
+          <button type="button" class="filter-chip comm-filter active" data-cat="ALL">전체 글</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="수어 표현 질문">수어 표현 질문</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="작품 추천 & 후기">작품 추천 & 후기</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="함께 수어 공부">함께 수어 공부</button>
+        </div>
+
+        <div class="community-layout">
+          <!-- 좌측 글쓰기 카드 -->
+          <form class="compose-card" id="communityForm">
+            <h3 style="font-size:18px; margin-bottom:16px;">새 게시글 작성</h3>
+
+            <div class="form-field">
+              <label for="postCategory">말머리 선택</label>
+              <select id="postCategory" class="form-select">
+                <option value="수어 표현 질문">수어 표현 질문</option>
+                <option value="작품 추천 & 후기">작품 추천 & 후기</option>
+                <option value="함께 수어 공부">함께 수어 공부</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="postAuthor">닉네임 (예: 수어입문자 / 농인시청자)</label>
+              <input type="text" id="postAuthor" class="form-input" placeholder="닉네임을 입력하세요" required />
+            </div>
+
+            <div class="form-field">
+              <label for="postTitle">제목</label>
+              <input type="text" id="postTitle" class="form-input" placeholder="궁금한 수어 표현이나 감상평 제목" required />
+            </div>
+
+            <div class="form-field">
+              <label for="postBody">내용</label>
+              <textarea id="postBody" class="form-textarea" placeholder="작품 장면이나 수어 동작에 대해 자유롭게 작성해 주세요." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;">게시글 등록하기</button>
+          </form>
+
+          <!-- 우측 게시글 피드 -->
+          <div class="post-list" id="communityPostList"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 MoA Community · 서로의 언어와 문화를 존중하는 소통 공간입니다.</span>
+      <a href="index.html">← 콘텐츠 탐색으로 돌아가기</a>
+    </div>
+  </footer>
+
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
