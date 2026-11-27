@@ -1,40 +1,48 @@
-// app.js — MoA 자동 롤링 OTT 히어로, 탐색, PIP 플레이어, 커뮤니티 로직
-
+// app.js — MoA 전체 페이지 인터랙션 및 상태 제어 통합 모듈
 document.addEventListener('DOMContentLoaded', async () => {
   initScrollReveal();
 
   const contents = await fetchMoAContents();
-  const prefs = await fetchPipSettings();
+  const pipPrefs = await fetchPipSettings();
 
   if (document.getElementById('ottHeroSection')) {
-    initHeroSlider(contents.slice(0, 4));
+    initHeroSlider(contents.slice(0, 5));
   }
+
   if (document.getElementById('catalogPageGrid')) {
     initShowcase(contents, 'catalogPageGrid', true);
   }
+
   if (document.getElementById('playerPageRoot')) {
-    initPlayerPage(contents, prefs);
+    initPlayerPage(contents, pipPrefs);
   }
+
   if (document.getElementById('communityPageRoot')) {
     initCommunityPage();
   }
+
+  if (document.getElementById('pricingPageRoot')) {
+    initPricingPage();
+  }
+
+  if (document.getElementById('profilePageRoot')) {
+    initProfilePage(pipPrefs);
+  }
 });
 
+// 0. 스크롤 등장 애니메이션
 function initScrollReveal() {
   const targets = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) {
-    targets.forEach(el => el.classList.add('is-visible'));
-    return;
-  }
-  const observer = new IntersectionObserver((entries) => {
+  if (!targets.length) return;
+  const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
+        io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1 });
-  targets.forEach(el => observer.observe(el));
+  }, { threshold: 0.12 });
+  targets.forEach(el => io.observe(el));
 }
 
 // 1. 4초 간격 자동 전환 OTT 메인 히어로 슬라이더
@@ -66,8 +74,19 @@ function initHeroSlider(slides) {
     genreEl.textContent = `${item.genre} · ${item.year}`;
     titleEl.textContent = item.title;
     descEl.textContent = item.summary;
-    watchBtn.href = `player.html?id=${item.id}`;
     glossEl.textContent = item.sign_gloss;
+
+    if (item.isDemo) {
+      watchBtn.href = `player.html?id=${item.id}`;
+      watchBtn.removeAttribute('target');
+      watchBtn.removeAttribute('rel');
+      watchBtn.textContent = '▶ MoA 수어 PIP 시연 영상 재생';
+    } else {
+      watchBtn.href = item.ott_url;
+      watchBtn.target = '_blank';
+      watchBtn.rel = 'noopener noreferrer';
+      watchBtn.textContent = `▶ ${item.platform}에서 감상하기 ↗`;
+    }
 
     dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
   }
@@ -88,7 +107,7 @@ function initHeroSlider(slides) {
   startAutoPlay();
 }
 
-// 2. 콘텐츠 쇼케이스 렌더링
+// 2. 콘텐츠 쇼케이스 렌더링 (모아 -> 시연 플레이어 / 4대 OTT -> 각 공식 플랫폼 사이트)
 function initShowcase(contents, gridId, enableSearch = false) {
   const grid = document.getElementById(gridId);
   let activePlatform = 'ALL';
@@ -108,195 +127,30 @@ function initShowcase(contents, gridId, enableSearch = false) {
       return;
     }
 
-    grid.innerHTML = filtered.map(item => `
-      <article class="poster-card">
-        <a href="player.html?id=${item.id}" class="poster-media" style="background-image:url('${item.thumb_url}')" aria-label="${item.title} 감상하기">
-          <span class="ott-pill">${item.platform}</span>
-          <span class="sign-pill">AI 수어 지원</span>
-        </a>
-        <div class="poster-info">
-          <div class="poster-meta">${item.genre} · ${item.year}</div>
-          <h3>${item.title}</h3>
-          <p>${item.summary}</p>
-          <a href="player.html?id=${item.id}" class="btn btn-primary btn-sm" style="width:100%;">수어 PIP로 감상하기 →</a>
-        </div>
-      </article>
-    `).join('');
+    grid.innerHTML = filtered.map(item => {
+      const targetHref = item.isDemo ? `player.html?id=${item.id}` : item.ott_url;
+      const linkAttrs = item.isDemo ? '' : 'target="_blank" rel="noopener noreferrer"';
+      const btnLabel = item.isDemo
+        ? '▶ 수어 PIP 시연 영상 재생'
+        : `${item.platform}에서 감상하기 ↗`;
+
+      return `
+        <article class="poster-card">
+          <a href="${targetHref}" ${linkAttrs} class="poster-media" style="background-image:url('${item.thumb_url}')" aria-label="${item.title}">
+            <span class="ott-pill">${item.platform}</span>
+            <span class="sign-pill">${item.isDemo ? '시연 플레이어' : 'AI 수어 지원'}</span>
+          </a>
+          <div class="poster-info">
+            <div class="poster-meta">${item.genre} · ${item.year}</div>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <a href="${targetHref}" ${linkAttrs} class="btn ${item.isDemo ? 'btn-primary' : 'btn-secondary'} btn-sm" style="width:100%;">
+              ${btnLabel}
+            </a>
+          </div>
+        </article>
+      `;
+    }).join('');
   }
 
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      activePlatform = chip.dataset.platform;
-      render();
-    });
-  });
-
-  if (enableSearch) {
-    const searchInput = document.getElementById('catalogSearchInput');
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value.trim().toLowerCase();
-        render();
-      });
-    }
-  }
-
-  render();
-}
-
-// 3. 플레이어 PIP 제어
-function initPlayerPage(contents, prefs) {
-  const params = new URLSearchParams(window.location.search);
-  const contentId = Number(params.get('id')) || 1;
-  const item = contents.find(c => c.id === contentId) || contents[0];
-
-  document.getElementById('playerTitle').textContent = item.title;
-  document.getElementById('playerMeta').textContent = `${item.platform} · ${item.genre} · ${item.year}`;
-  document.getElementById('playerSummary').textContent = item.summary;
-  document.getElementById('playerDialogue').textContent = item.sample_dialogue;
-  document.getElementById('playerGloss').textContent = item.sign_gloss;
-  document.getElementById('officialOttBtn').href = item.ott_url;
-
-  const viewport = document.getElementById('playerScreenBg');
-  viewport.style.backgroundImage = `linear-gradient(180deg, rgba(7,9,15,0.22) 0%, rgba(7,9,15,0.92) 100%), url('${item.thumb_url}')`;
-
-  const pipEl = document.getElementById('liveDemoPip');
-  const toggleBtn = document.getElementById('demoPipToggle');
-  const scaleInput = document.getElementById('demoScaleRange');
-  const speedInput = document.getElementById('demoSpeedRange');
-  const scaleLabel = document.getElementById('demoScaleLabel');
-  const speedLabel = document.getElementById('demoSpeedLabel');
-  const pipSpeedBadge = document.getElementById('demoPipSpeedBadge');
-  const saveBtn = document.getElementById('demoSavePrefsBtn');
-  const statusMsg = document.getElementById('demoSaveStatus');
-
-  let state = {
-    enabled: prefs.enabled !== false,
-    scale: prefs.scale || 100,
-    position: prefs.position || 'bottom-right',
-    speed: prefs.speed || 1.0
-  };
-
-  function applyState() {
-    pipEl.classList.toggle('is-hidden', !state.enabled);
-    toggleBtn.textContent = state.enabled ? '아바타 ON' : '아바타 OFF';
-    toggleBtn.classList.toggle('off', !state.enabled);
-
-    pipEl.classList.remove('pos-bottom-right', 'pos-bottom-left', 'pos-top-right', 'pos-top-left');
-    pipEl.classList.add(`pos-${state.position}`);
-    pipEl.style.transform = `scale(${state.scale / 100})`;
-
-    scaleInput.value = state.scale;
-    scaleLabel.textContent = `${state.scale}%`;
-
-    speedInput.value = state.speed;
-    const fmt = Number(state.speed).toFixed(1);
-    speedLabel.textContent = `${fmt}x`;
-    pipSpeedBadge.textContent = `${fmt}x`;
-
-    pipEl.querySelectorAll('.av-hand').forEach(h => {
-      h.style.animationDuration = `${(1.6 / state.speed).toFixed(2)}s`;
-    });
-
-    document.querySelectorAll('.pos-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.pos === state.position);
-    });
-  }
-
-  toggleBtn.addEventListener('click', () => { state.enabled = !state.enabled; applyState(); });
-  scaleInput.addEventListener('input', (e) => { state.scale = Number(e.target.value); applyState(); });
-  speedInput.addEventListener('input', (e) => { state.speed = Number(e.target.value); applyState(); });
-
-  document.querySelectorAll('.pos-btn').forEach(btn => {
-    btn.addEventListener('click', () => { state.position = btn.dataset.pos; applyState(); });
-  });
-
-  if (saveBtn) {
-    saveBtn.addEventListener('click', async () => {
-      const res = await savePipSettings(state);
-      statusMsg.textContent = res.mode === 'cloud'
-        ? '✓ 클라우드 DB에 설정이 저장되었습니다.'
-        : '✓ 브라우저에 PIP 설정이 저장되었습니다.';
-    });
-  }
-
-  applyState();
-}
-
-// 4. 농인 & 수어 학습자 커뮤니티 게시판
-function initCommunityPage() {
-  const storageKey = 'moa_community_posts_v1';
-  let posts = JSON.parse(localStorage.getItem(storageKey)) || [...window.MOA_DEFAULT_POSTS];
-  let activeCat = 'ALL';
-
-  const listEl = document.getElementById('communityPostList');
-  const formEl = document.getElementById('communityForm');
-
-  function savePosts() {
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-  }
-
-  function renderPosts() {
-    const filtered = activeCat === 'ALL' ? posts : posts.filter(p => p.category === activeCat);
-    listEl.innerHTML = filtered.map(post => `
-      <article class="post-card">
-        <div class="post-header">
-          <span class="post-badge">${post.category}</span>
-          <span style="font-size:12px; color:var(--text-muted);">${post.date}</span>
-        </div>
-        <h3 class="post-title">${post.title}</h3>
-        <p class="post-body">${post.body}</p>
-        <div class="post-footer">
-          <span>작성자 · ${post.author}</span>
-          <button type="button" class="like-btn" onclick="likeCommunityPost(${post.id})">
-            ♥ 공감 ${post.likes}
-          </button>
-        </div>
-      </article>
-    `).join('');
-  }
-
-  window.likeCommunityPost = (id) => {
-    const target = posts.find(p => p.id === id);
-    if (target) {
-      target.likes += 1;
-      savePosts();
-      renderPosts();
-    }
-  };
-
-  document.querySelectorAll('.comm-filter').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.comm-filter').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeCat = btn.dataset.cat;
-      renderPosts();
-    });
-  });
-
-  formEl.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const category = document.getElementById('postCategory').value;
-    const author = document.getElementById('postAuthor').value.trim() || '익명 사용자';
-    const title = document.getElementById('postTitle').value.trim();
-    const body = document.getElementById('postBody').value.trim();
-    if (!title || !body) return;
-
-    posts.unshift({
-      id: Date.now(),
-      category,
-      author,
-      title,
-      body,
-      likes: 1,
-      date: '방금 전'
-    });
-    savePosts();
-    formEl.reset();
-    renderPosts();
-  });
-
-  renderPosts();
-}
+  document.query
