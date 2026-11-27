@@ -1,12 +1,20 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (방어적 독립 모듈 구조) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (아바타 캐릭터 4종 전환 지원) */
 (function () {
   const PREFS_KEY = 'moa_pip_prefs_v1';
   const SUB_KEY = 'moa_pass_subscribed';
   const PROFILE_KEY = 'moa_user_profile_v1';
   const POSTS_KEY = 'moa_community_posts_v1';
 
+  const AVATAR_META = {
+    moa: { name: '모아', tag: '표준 AI 아바타' },
+    seoyeon: { name: '서연', tag: '감성 드라마형' },
+    dohyun: { name: '도현', tag: '선명 전달형' },
+    nova: { name: '노바', tag: '고대비 미니멀' }
+  };
+
   const DEFAULT_PREFS = {
     enabled: true,
+    character: 'moa',
     scale: 100,
     opacity: 95,
     position: 'bottom-right',
@@ -41,17 +49,41 @@
     });
   }
 
+  function applyAvatarCharacterTheme(pipEl, charKey, labelEl) {
+    if (!pipEl) return;
+    const key = AVATAR_META[charKey] ? charKey : 'moa';
+    pipEl.classList.remove('char-moa', 'char-seoyeon', 'char-dohyun', 'char-nova');
+    pipEl.classList.add(`char-${key}`);
+    if (labelEl) {
+      labelEl.textContent = `KSL · ${AVATAR_META[key].name}`;
+    }
+  }
+
   /* 1. 메인 홈 (index.html): 4초 롤링 히어로 + 필터/검색 카탈로그 */
   function initHome() {
     const grid = document.getElementById('catalogPageGrid');
     const heroBg = document.getElementById('heroBg');
     if (!grid && !heroBg) return;
 
+    const prefs = getPrefs();
+    const heroPip = document.querySelector('#ottHeroSection .pip-widget');
+    const heroPipLabel = document.querySelector('#ottHeroSection .pip-label span:first-child');
+    if (heroPip) {
+      if (!heroPip.querySelector('.av-hair')) {
+        const sil = heroPip.querySelector('.avatar-silhouette');
+        if (sil) {
+          const hair = document.createElement('div');
+          hair.className = 'av-hair';
+          sil.prepend(hair);
+        }
+      }
+      applyAvatarCharacterTheme(heroPip, prefs.character, heroPipLabel);
+    }
+
     const allContents = (window.MOA_DATA && Array.isArray(window.MOA_DATA.contents))
       ? window.MOA_DATA.contents
       : [];
 
-    // 히어로 슬라이더 (대표 5개 작품 롤링)
     const heroSlides = allContents.slice(0, 5);
     const heroPlatform = document.getElementById('heroPlatform');
     const heroGenre = document.getElementById('heroGenre');
@@ -121,7 +153,6 @@
     renderHero(0);
     restartSlider();
 
-    // 카탈로그 필터링 및 카드 렌더링
     let currentPlatform = 'ALL';
     let currentQuery = '';
     const searchInput = document.getElementById('catalogSearchInput');
@@ -216,7 +247,10 @@
 
     const prefs = getPrefs();
     const pipBox = document.getElementById('liveDemoPip');
+    const pipCharLabel = document.getElementById('demoPipCharName');
     const pipToggle = document.getElementById('demoPipToggle');
+    const charBtns = document.querySelectorAll('.char-btn[data-char]');
+    const charActiveText = document.getElementById('demoCharActiveLabel');
     const scaleRange = document.getElementById('demoScaleRange');
     const scaleLabel = document.getElementById('demoScaleLabel');
     const opacityRange = document.getElementById('demoOpacityRange');
@@ -235,6 +269,14 @@
       pipBox.classList.add(`pos-${prefs.position}`);
       pipBox.style.transform = `scale(${prefs.scale / 100})`;
       pipBox.style.opacity = prefs.enabled ? String(prefs.opacity / 100) : '0';
+
+      applyAvatarCharacterTheme(pipBox, prefs.character, pipCharLabel);
+
+      const meta = AVATAR_META[prefs.character] || AVATAR_META.moa;
+      if (charActiveText) charActiveText.textContent = `${meta.name} (${meta.tag})`;
+      charBtns.forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-char') === prefs.character);
+      });
 
       if (pipToggle) {
         pipToggle.textContent = prefs.enabled ? '아바타 ON' : '아바타 OFF';
@@ -260,6 +302,12 @@
         applyPipStyles();
       });
     }
+    charBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        prefs.character = btn.getAttribute('data-char') || 'moa';
+        applyPipStyles();
+      });
+    });
     if (scaleRange) {
       scaleRange.addEventListener('input', (e) => {
         prefs.scale = Number(e.target.value);
@@ -287,13 +335,12 @@
     if (saveBtn) {
       saveBtn.addEventListener('click', () => {
         savePrefs(prefs);
-        if (saveStatus) saveStatus.textContent = '✓ 현재 수어 PIP 설정이 기본값으로 저장되었습니다.';
+        if (saveStatus) saveStatus.textContent = '✓ 캐릭터 및 수어 PIP 설정이 기본값으로 저장되었습니다.';
       });
     }
 
     applyPipStyles();
 
-    // 비디오 재생 및 타임코드 동기화
     function formatSec(sec) {
       const s = Math.max(0, Math.floor(sec || 0));
       const m = String(Math.floor(s / 60)).padStart(2, '0');
@@ -488,6 +535,7 @@
     const prefs = getPrefs();
     const nameInput = document.getElementById('profName');
     const roleInput = document.getElementById('profRole');
+    const charInput = document.getElementById('profCharacter');
     const scaleInput = document.getElementById('profScale');
     const opacityInput = document.getElementById('profOpacity');
     const posInput = document.getElementById('profPosition');
@@ -497,6 +545,7 @@
 
     if (nameInput) nameInput.value = profile.name;
     if (roleInput) roleInput.value = profile.role;
+    if (charInput) charInput.value = prefs.character || 'moa';
     if (scaleInput) scaleInput.value = String(prefs.scale);
     if (opacityInput) opacityInput.value = String(prefs.opacity);
     if (posInput) posInput.value = prefs.position;
@@ -514,13 +563,14 @@
 
         savePrefs({
           enabled: true,
+          character: (charInput ? charInput.value : 'moa') || 'moa',
           scale: Number(scaleInput ? scaleInput.value : 100) || 100,
           opacity: Number(opacityInput ? opacityInput.value : 95) || 95,
           position: (posInput ? posInput.value : 'bottom-right') || 'bottom-right',
           speed: Number(speedInput ? speedInput.value : 1.0) || 1.0
         });
 
-        if (msg) msg.textContent = '✓ 프로필과 기본 수어 PIP 설정이 저장되었습니다.';
+        if (msg) msg.textContent = '✓ 프로필과 기본 수어 캐릭터·PIP 설정이 저장되었습니다.';
       });
     }
   }
