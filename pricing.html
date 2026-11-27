@@ -11,12 +11,86 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="MoA 홈">
-        <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="moaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="moaLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#3B82F6"/>
               <stop offset="100%" stop-color="#A78BFA"/>
             </linearGradient>
           </defs>
-          <path d="M4 22V6C4 6 5.8 4 7.5 4C9.2 4 11 6.5 12.5 8.5C14 10.5 15.5 14.5 17 14.5C18.5 14.5 19.5 10.5 20.8 8.2C22 5.8 23.5 4 25.2 4C27 4 29 6 29.5 7C30 8 28.5 12 27 15C25.5 18 24 19 22.5 19C21 19 19.5 17 19 16C18.5 15 17.5 12.5 17 12.5C16.5 12.5 15.8 14 15 15.5C13.5 18.5 11.5 21 9.5 21.8C7.5 22.6 4 22 4 22Z" stroke="url(#moaGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 12.5C17.5 12.5 18
+          <path d="M8.5 16C5.46243 16 3 13.3137 3 10C3 6.68629 5.46243 4 8.5 4C12.5 4 15.5 16 19.5 16C22.5376 16 25 13.3137 25 10C25 6.68629 22.5376 4 19.5 4C15.5 4 12.5 16 8.5 16Z" stroke="url(#moaLogoGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="logo-text">MoA</span>
+      </a>
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="index.html">콘텐츠 탐색</a>
+        <a href="about.html">서비스 소개</a>
+        <a href="pricing.html" class="active">멤버십</a>
+        <a href="community.html">소통 커뮤니티</a>
+        <a href="profile.html">내 프로필 · 설정</a>
+      </nav>
+      <div class="header-cta">
+        <a href="profile.html" class="btn btn-secondary btn-sm">내 설정</a>
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="pricingPageRoot" style="padding-top: 84px;">
+    <section class="section">
+      <div class="container">
+        <div style="text-align:center; max-width:640px; margin:0 auto 48px;">
+          <div class="eyebrow">MEMBERSHIP</div>
+          <h1 class="section-title">부담 없는 월 3,990원으로<br />모든 영상에 수어 통역을 더하세요</h1>
+          <p class="section-desc">기본 탐색과 시연 플레이어는 무료로 체험할 수 있으며, MoA Pass로 광고 없는 무제한 감상을 지원합니다.</p>
+        </div>
+
+        <div class="about-grid" style="max-width:920px; margin:0 auto;">
+          <div class="about-card">
+            <span class="eyebrow" style="color:var(--text-muted);">BASIC · 무료</span>
+            <h2 style="font-size:28px; margin:8px 0 12px;">0원 <span style="font-size:14px; color:var(--text-secondary); font-weight:400;">/ 월</span></h2>
+            <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">
+              수어 PIP 시연 영상과 카탈로그 탐색, 커뮤니티 이용이 가능한 기본 플랜입니다.
+            </p>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:14px; color:var(--text-secondary); margin-bottom:28px;">
+              <li>• 시연 플레이어 수어 PIP 기본 체험</li>
+              <li>• 4대 OTT 수어 지원 작품 카탈로그 탐색</li>
+              <li>• 소통 커뮤니티 글 작성 및 공감 참여</li>
+              <li>• 기본 스폰서 배너 노출</li>
+            </ul>
+            <a href="index.html" class="btn btn-secondary" style="width:100%;">무료로 계속 탐색하기</a>
+          </div>
+
+          <div class="about-card highlight">
+            <span class="eyebrow">MoA PASS · 추천</span>
+            <h2 style="font-size:28px; margin:8px 0 12px;">3,990원 <span style="font-size:14px; color:var(--text-secondary); font-weight:400;">/ 월</span></h2>
+            <p style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">
+              모든 수어 지원작을 광고 없이 쾌적하게 즐기고 개인 PIP 프리셋을 저장합니다.
+            </p>
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:14px; color:var(--text-primary); margin-bottom:28px;">
+              <li>• 전 회차 무제한 AI 수어 PIP 동기화</li>
+              <li>• 스폰서·사이드 배너 광고 완전 제거</li>
+              <li>• 아바타 크기·투명도·위치·속도 프리셋 저장</li>
+              <li>• 신규 수어 지원작 우선 알림 제공</li>
+            </ul>
+            <button type="button" id="subscribePassBtn" class="btn btn-primary" style="width:100%;">
+              MoA Pass 시작하기 (월 3,990원)
+            </button>
+            <p id="pricingStatusMsg" style="font-size:12px; color:var(--accent-lavender); margin-top:10px; min-height:18px; text-align:center;"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 MoA. All Rights Reserved.</span>
+      <span>AI Sign Language OTT Accessibility</span>
+    </div>
+  </footer>
+
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
