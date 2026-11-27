@@ -1,4 +1,4 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (아바타 캐릭터 4종 전환 지원) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (버튼 통일 + 영상 폴백 동기화) */
 (function () {
   const PREFS_KEY = 'moa_pip_prefs_v1';
   const SUB_KEY = 'moa_pass_subscribed';
@@ -107,16 +107,15 @@
       if (heroSignGloss) heroSignGloss.textContent = item.signGloss || '[수어] 실시간 통역 지원';
 
       if (heroWatchBtn) {
+        heroWatchBtn.textContent = '바로가기';
         if (item.isDemo) {
           heroWatchBtn.href = 'player.html?id=1';
           heroWatchBtn.removeAttribute('target');
           heroWatchBtn.removeAttribute('rel');
-          heroWatchBtn.textContent = '▶ MoA 수어 PIP 시연 영상 재생';
         } else {
           heroWatchBtn.href = item.officialUrl;
           heroWatchBtn.target = '_blank';
           heroWatchBtn.rel = 'noopener noreferrer';
-          heroWatchBtn.textContent = `↗ ${item.platform} 공식 페이지에서 보기`;
         }
       }
 
@@ -180,8 +179,8 @@
 
       grid.innerHTML = filtered.map((item) => {
         const btnHtml = item.isDemo
-          ? `<a href="player.html?id=${item.id}" class="btn btn-primary btn-sm" style="width:100%;">▶ 수어 PIP 시연 재생</a>`
-          : `<a href="${item.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="width:100%;">↗ ${item.platform} 공식 바로가기</a>`;
+          ? `<a href="player.html?id=${item.id}" class="btn btn-secondary btn-sm" style="width:100%;">바로가기</a>`
+          : `<a href="${item.officialUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="width:100%;">바로가기</a>`;
 
         return `
           <article class="poster-card">
@@ -219,7 +218,7 @@
     renderGrid();
   }
 
-  /* 2. PIP 플레이어 (player.html) */
+  /* 2. PIP 플레이어 (player.html) — 영상 재생 및 폴백 시네마 타이머 보장 */
   function initPlayer() {
     const root = document.getElementById('playerPageRoot');
     if (!root) return;
@@ -234,6 +233,7 @@
     const metaEl = document.getElementById('playerMeta');
     const summaryEl = document.getElementById('playerSummary');
     const videoEl = document.getElementById('demoVideoEl');
+    const screenBox = videoEl ? videoEl.parentElement : null;
     const playPauseBtn = document.getElementById('videoPlayPauseBtn');
     const seekBar = document.getElementById('videoSeekBar');
     const timeText = document.getElementById('videoTimeText');
@@ -289,7 +289,9 @@
       if (speedRange) speedRange.value = String(prefs.speed);
       if (speedLabel) speedLabel.textContent = `${Number(prefs.speed).toFixed(1)}x`;
       if (speedBadge) speedBadge.textContent = `${Number(prefs.speed).toFixed(1)}x`;
-      if (videoEl) videoEl.playbackRate = Number(prefs.speed) || 1.0;
+      if (videoEl) {
+        try { videoEl.playbackRate = Number(prefs.speed) || 1.0; } catch (e) {}
+      }
 
       posBtns.forEach((btn) => {
         btn.classList.toggle('active', btn.getAttribute('data-pos') === prefs.position);
@@ -348,47 +350,118 @@
       return `${m}:${r}`;
     }
 
+    function updateCueByTime(cur, dur) {
+      if (seekBar) seekBar.value = String((cur / dur) * 100);
+      if (timeText) timeText.textContent = `${formatSec(cur)} / ${formatSec(dur)}`;
+
+      const timeline = item.timeline || [];
+      let activeCue = timeline[0];
+      for (let i = 0; i < timeline.length; i++) {
+        if (cur >= timeline[i].time) activeCue = timeline[i];
+      }
+      if (activeCue) {
+        if (dialogueEl) dialogueEl.textContent = activeCue.dialogue;
+        if (glossEl) glossEl.textContent = activeCue.gloss;
+        if (pipActionEl) pipActionEl.textContent = activeCue.action;
+      }
+    }
+
     if (videoEl) {
-      videoEl.src = item.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-      videoEl.play().catch(() => {
-        if (playPauseBtn) playPauseBtn.textContent = '▶ 재생';
+      // 포스터 배경을 기본으로 세팅해 영상 로딩 전/실패 시에도 검은 화면이 안 보이게 처리
+      if (screenBox && item.poster) {
+        screenBox.style.backgroundImage = `linear-gradient(rgba(7,9,15,0.35), rgba(7,9,15,0.55)), url('${item.poster}')`;
+        screenBox.style.backgroundSize = 'cover';
+        screenBox.style.backgroundPosition = 'center';
+      }
+
+      const fallbackUrls = [
+        item.videoUrl,
+        'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+        'https://www.w3schools.com/html/mov_bbb.mp4'
+      ].filter(Boolean);
+
+      let urlIdx = 0;
+      let usingSimTimer = false;
+      let simPlaying = true;
+      let simTime = 0;
+      const simDuration = 15;
+
+      function startSimFallback() {
+        if (usingSimTimer) return;
+        usingSimTimer = true;
+        videoEl.style.display = 'none';
+        if (playPauseBtn) playPauseBtn.textContent = '❚❚ 일시정지';
+        setInterval(() => {
+          if (!simPlaying) return;
+          const rate = Number(prefs.speed) || 1.0;
+          simTime += 0.25 * rate;
+          if (simTime >= simDuration) simTime = 0;
+          updateCueByTime(simTime, simDuration);
+        }, 250);
+      }
+
+      function tryLoadVideo(idx) {
+        if (idx >= fallbackUrls.length) {
+          startSimFallback();
+          return;
+        }
+        videoEl.src = fallbackUrls[idx];
+        videoEl.load();
+        const playPromise = videoEl.play();
+        if (playPromise && typeof playPromise.then === 'function') {
+          playPromise.then(() => {
+            if (playPauseBtn) playPauseBtn.textContent = '❚❚ 일시정지';
+          }).catch(() => {
+            if (playPauseBtn) playPauseBtn.textContent = '▶ 재생';
+          });
+        }
+      }
+
+      videoEl.addEventListener('error', () => {
+        urlIdx += 1;
+        tryLoadVideo(urlIdx);
       });
 
+      tryLoadVideo(0);
+
       const togglePlay = () => {
+        if (usingSimTimer) {
+          simPlaying = !simPlaying;
+          if (playPauseBtn) playPauseBtn.textContent = simPlaying ? '❚❚ 일시정지' : '▶ 재생';
+          return;
+        }
         if (videoEl.paused) {
-          videoEl.play();
-          if (playPauseBtn) playPauseBtn.textContent = '❚❚ 일시정지';
+          videoEl.play().then(() => {
+            if (playPauseBtn) playPauseBtn.textContent = '❚❚ 일시정지';
+          }).catch(() => {
+            startSimFallback();
+          });
         } else {
           videoEl.pause();
           if (playPauseBtn) playPauseBtn.textContent = '▶ 재생';
         }
       };
 
-      videoEl.addEventListener('click', togglePlay);
+      if (screenBox) screenBox.addEventListener('click', togglePlay);
       if (playPauseBtn) playPauseBtn.addEventListener('click', togglePlay);
 
       videoEl.addEventListener('timeupdate', () => {
+        if (usingSimTimer) return;
         const cur = videoEl.currentTime || 0;
-        const dur = videoEl.duration || 15;
-        if (seekBar) seekBar.value = String((cur / dur) * 100);
-        if (timeText) timeText.textContent = `${formatSec(cur)} / ${formatSec(dur)}`;
-
-        const timeline = item.timeline || [];
-        let activeCue = timeline[0];
-        for (let i = 0; i < timeline.length; i++) {
-          if (cur >= timeline[i].time) activeCue = timeline[i];
-        }
-        if (activeCue) {
-          if (dialogueEl) dialogueEl.textContent = activeCue.dialogue;
-          if (glossEl) glossEl.textContent = activeCue.gloss;
-          if (pipActionEl) pipActionEl.textContent = activeCue.action;
-        }
+        const dur = (videoEl.duration && isFinite(videoEl.duration)) ? videoEl.duration : 15;
+        updateCueByTime(cur, dur);
       });
 
       if (seekBar) {
         seekBar.addEventListener('input', (e) => {
-          const dur = videoEl.duration || 15;
-          videoEl.currentTime = (Number(e.target.value) / 100) * dur;
+          const pct = Number(e.target.value) / 100;
+          if (usingSimTimer) {
+            simTime = pct * simDuration;
+            updateCueByTime(simTime, simDuration);
+            return;
+          }
+          const dur = (videoEl.duration && isFinite(videoEl.duration)) ? videoEl.duration : 15;
+          videoEl.currentTime = pct * dur;
         });
       }
     }
