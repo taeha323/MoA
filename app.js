@@ -1,4 +1,4 @@
-// app.js — MoA 자동 롤링 OTT 히어로, 탐색, 수어 학습 플레이어, 커뮤니티 로직
+// app.js — MoA 자동 롤링 OTT 히어로, 탐색, PIP 플레이어, 커뮤니티 로직
 
 document.addEventListener('DOMContentLoaded', async () => {
   initScrollReveal();
@@ -45,7 +45,6 @@ function initHeroSlider(slides) {
   const titleEl = document.getElementById('heroTitle');
   const descEl = document.getElementById('heroDesc');
   const watchBtn = document.getElementById('heroWatchBtn');
-  const learnBtn = document.getElementById('heroLearnBtn');
   const glossEl = document.getElementById('heroSignGloss');
   const dotsWrap = document.getElementById('heroDots');
 
@@ -68,7 +67,6 @@ function initHeroSlider(slides) {
     titleEl.textContent = item.title;
     descEl.textContent = item.summary;
     watchBtn.href = `player.html?id=${item.id}`;
-    learnBtn.href = `player.html?id=${item.id}&mode=learn`;
     glossEl.textContent = item.sign_gloss;
 
     dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
@@ -90,7 +88,7 @@ function initHeroSlider(slides) {
   startAutoPlay();
 }
 
-// 2. 콘텐츠 쇼케이스 렌더링 (불필요한 안내 문구 제거, 포스터 중심)
+// 2. 콘텐츠 쇼케이스 렌더링
 function initShowcase(contents, gridId, enableSearch = false) {
   const grid = document.getElementById(gridId);
   let activePlatform = 'ALL';
@@ -120,10 +118,7 @@ function initShowcase(contents, gridId, enableSearch = false) {
           <div class="poster-meta">${item.genre} · ${item.year}</div>
           <h3>${item.title}</h3>
           <p>${item.summary}</p>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-            <a href="player.html?id=${item.id}" class="btn btn-primary btn-sm">PIP 감상하기</a>
-            <a href="player.html?id=${item.id}&mode=learn" class="btn btn-secondary btn-sm">수어 학습</a>
-          </div>
+          <a href="player.html?id=${item.id}" class="btn btn-primary btn-sm" style="width:100%;">수어 PIP로 감상하기 →</a>
         </div>
       </article>
     `).join('');
@@ -151,11 +146,10 @@ function initShowcase(contents, gridId, enableSearch = false) {
   render();
 }
 
-// 3. 플레이어 & 수어 학습 모드 제어
+// 3. 플레이어 PIP 제어
 function initPlayerPage(contents, prefs) {
   const params = new URLSearchParams(window.location.search);
   const contentId = Number(params.get('id')) || 1;
-  const initialMode = params.get('mode') === 'learn' ? 'learn' : 'watch';
   const item = contents.find(c => c.id === contentId) || contents[0];
 
   document.getElementById('playerTitle').textContent = item.title;
@@ -168,21 +162,6 @@ function initPlayerPage(contents, prefs) {
   const viewport = document.getElementById('playerScreenBg');
   viewport.style.backgroundImage = `linear-gradient(180deg, rgba(7,9,15,0.22) 0%, rgba(7,9,15,0.92) 100%), url('${item.thumb_url}')`;
 
-  // 핵심 수어 단어 카드 렌더링
-  const vocabContainer = document.getElementById('vocabCardList');
-  if (vocabContainer && item.vocab) {
-    vocabContainer.innerHTML = item.vocab.map(v => `
-      <div class="vocab-card">
-        <div class="vocab-card-head">
-          <span class="vocab-word">${v.word}</span>
-          <span class="vocab-tag">${v.level}</span>
-        </div>
-        <p class="vocab-tip">${v.hand}</p>
-      </div>
-    `).join('');
-  }
-
-  // PIP 제어
   const pipEl = document.getElementById('liveDemoPip');
   const toggleBtn = document.getElementById('demoPipToggle');
   const scaleInput = document.getElementById('demoScaleRange');
@@ -197,7 +176,7 @@ function initPlayerPage(contents, prefs) {
     enabled: prefs.enabled !== false,
     scale: prefs.scale || 100,
     position: prefs.position || 'bottom-right',
-    speed: initialMode === 'learn' ? 0.8 : (prefs.speed || 1.0)
+    speed: prefs.speed || 1.0
   };
 
   function applyState() {
@@ -226,27 +205,6 @@ function initPlayerPage(contents, prefs) {
     });
   }
 
-  // 감상 모드 / 수어 학습 모드 탭 전환
-  const watchTab = document.getElementById('tabWatchMode');
-  const learnTab = document.getElementById('tabLearnMode');
-  const watchPanel = document.getElementById('watchModePanel');
-  const learnPanel = document.getElementById('learnModePanel');
-
-  function setMode(mode) {
-    const isLearn = mode === 'learn';
-    watchTab.classList.toggle('active', !isLearn);
-    learnTab.classList.toggle('active', isLearn);
-    watchPanel.style.display = isLearn ? 'none' : 'block';
-    learnPanel.style.display = isLearn ? 'block' : 'none';
-    if (isLearn) {
-      state.speed = 0.8;
-      applyState();
-    }
-  }
-
-  watchTab.addEventListener('click', () => setMode('watch'));
-  learnTab.addEventListener('click', () => setMode('learn'));
-
   toggleBtn.addEventListener('click', () => { state.enabled = !state.enabled; applyState(); });
   scaleInput.addEventListener('input', (e) => { state.scale = Number(e.target.value); applyState(); });
   speedInput.addEventListener('input', (e) => { state.speed = Number(e.target.value); applyState(); });
@@ -265,7 +223,6 @@ function initPlayerPage(contents, prefs) {
   }
 
   applyState();
-  setMode(initialMode);
 }
 
 // 4. 농인 & 수어 학습자 커뮤니티 게시판
@@ -322,7 +279,7 @@ function initCommunityPage() {
   formEl.addEventListener('submit', (e) => {
     e.preventDefault();
     const category = document.getElementById('postCategory').value;
-    const author = document.getElementById('postAuthor').value.trim() || '익명 학습자';
+    const author = document.getElementById('postAuthor').value.trim() || '익명 사용자';
     const title = document.getElementById('postTitle').value.trim();
     const body = document.getElementById('postBody').value.trim();
     if (!title || !body) return;
