@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>수어 PIP & 학습 플레이어 — MoA</title>
+  <title>수어 PIP 플레이어 — MoA</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -16,7 +16,6 @@
       </a>
       <nav class="nav-links">
         <a href="index.html">콘텐츠 탐색</a>
-        <a href="player.html?id=1&mode=learn" class="active">수어 학습 모드</a>
         <a href="community.html">소통 커뮤니티</a>
         <a href="about.html">서비스 소개</a>
       </nav>
@@ -66,58 +65,43 @@
             </div>
           </div>
 
-          <!-- 우측 컨트롤 패널: 감상 모드 / 수어 학습 모드 전환 -->
+          <!-- 우측 컨트롤 패널 -->
           <div class="demo-control-panel">
             <div>
-              <div class="mode-switch-tabs">
-                <button type="button" class="mode-tab active" id="tabWatchMode">PIP 감상 모드</button>
-                <button type="button" class="mode-tab" id="tabLearnMode">수어 학습 모드</button>
-              </div>
+              <h3 style="font-size:17px; margin-bottom:8px;">아바타 오버레이 설정</h3>
+              <p id="playerSummary" style="font-size:13px; color:var(--text-secondary); margin-bottom:20px;"></p>
 
-              <!-- 1) 일반 감상 설정 패널 -->
-              <div id="watchModePanel">
-                <p id="playerSummary" style="font-size:13px; color:var(--text-secondary); margin-bottom:18px;"></p>
-
-                <div class="control-group">
-                  <div class="control-row">
-                    <strong>수어 아바타 표시</strong>
-                    <button type="button" class="toggle-switch" id="demoPipToggle">아바타 ON</button>
-                  </div>
-                </div>
-
-                <div class="control-group">
-                  <div class="control-row">
-                    <label for="demoScaleRange">아바타 크기</label>
-                    <strong id="demoScaleLabel">100%</strong>
-                  </div>
-                  <input type="range" id="demoScaleRange" min="75" max="135" value="100" />
-                </div>
-
-                <div class="control-group">
-                  <div class="control-row"><span>아바타 위치</span></div>
-                  <div class="pos-selector">
-                    <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
-                    <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
-                    <button type="button" class="pos-btn" data-pos="bottom-left">좌측 하단</button>
-                    <button type="button" class="pos-btn active" data-pos="bottom-right">우측 하단</button>
-                  </div>
-                </div>
-
-                <div class="control-group">
-                  <div class="control-row">
-                    <label for="demoSpeedRange">싱크 속도</label>
-                    <strong id="demoSpeedLabel">1.0x</strong>
-                  </div>
-                  <input type="range" id="demoSpeedRange" min="0.8" max="1.4" step="0.1" value="1.0" />
+              <div class="control-group">
+                <div class="control-row">
+                  <strong>수어 아바타 표시</strong>
+                  <button type="button" class="toggle-switch" id="demoPipToggle">아바타 ON</button>
                 </div>
               </div>
 
-              <!-- 2) 수어 학습 모드 패널 -->
-              <div id="learnModePanel" style="display:none;">
-                <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-                  장면 속 핵심 수어 단어를 0.8x 느린 속도로 반복 관찰하며 손동작과 표정을 익혀보세요.
-                </p>
-                <div class="vocab-list" id="vocabCardList"></div>
+              <div class="control-group">
+                <div class="control-row">
+                  <label for="demoScaleRange">아바타 크기</label>
+                  <strong id="demoScaleLabel">100%</strong>
+                </div>
+                <input type="range" id="demoScaleRange" min="75" max="135" value="100" />
+              </div>
+
+              <div class="control-group">
+                <div class="control-row"><span>아바타 위치</span></div>
+                <div class="pos-selector">
+                  <button type="button" class="pos-btn" data-pos="top-left">좌측 상단</button>
+                  <button type="button" class="pos-btn" data-pos="top-right">우측 상단</button>
+                  <button type="button" class="pos-btn" data-pos="bottom-left">좌측 하단</button>
+                  <button type="button" class="pos-btn active" data-pos="bottom-right">우측 하단</button>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-row">
+                  <label for="demoSpeedRange">싱크 속도</label>
+                  <strong id="demoSpeedLabel">1.0x</strong>
+                </div>
+                <input type="range" id="demoSpeedRange" min="0.8" max="1.4" step="0.1" value="1.0" />
               </div>
             </div>
 
@@ -130,13 +114,13 @@
           </div>
         </div>
 
-        <!-- 플레이어 하단 절제된 학습/커뮤니티 연계 배너 -->
+        <!-- 커뮤니티 연계 배너 -->
         <aside class="sponsor-banner">
           <div class="sponsor-left">
             <span class="ad-badge">COMMUNITY</span>
             <div class="sponsor-text">
-              <h4>이 장면의 수어 표현이 궁금하거나 함께 연습하고 싶으신가요?</h4>
-              <p>농인 시청자와 수어 학습자들이 자유롭게 질문하고 소통하는 MoA 커뮤니티에서 이야기를 나눠보세요.</p>
+              <h4>이 장면의 수어 표현이 궁금하거나 함께 이야기 나누고 싶으신가요?</h4>
+              <p>농인 시청자와 수어 학습자들이 자유롭게 소통하는 MoA 커뮤니티를 방문해 보세요.</p>
             </div>
           </div>
           <a href="community.html" class="btn btn-secondary btn-sm">소통 커뮤니티 이동 →</a>
