@@ -1,6 +1,6 @@
-/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127_2: 심플 일체형 아바타 + 자유 드래그 이동) */
+/* app.js — MoA 전체 페이지 통합 인터랙션 (v20261127_3: 매끄러운 일체형 팔·손목 + 마우스 자유 드래그) */
 (function () {
-  const PREFS_KEY = 'moa_pip_prefs_v3';
+  const PREFS_KEY = 'moa_pip_prefs_v4';
   const SUB_KEY = 'moa_pass_subscribed';
   const PROFILE_KEY = 'moa_user_profile_v1';
   const POSTS_KEY = 'moa_community_posts_v1';
@@ -96,8 +96,8 @@
     });
   }
 
-  /* 심플하고 매끄러운 일체형 아바타 SVG (팔·손목·손이 하나로 이어져 절대 끊기지 않음) */
-  function buildSimpleAvatarSVG(charKey, mood) {
+  /* 매끄럽게 이어지는 단일 구조 아바타 SVG (손목과 팔이 절대 끊어지지 않는 곡선 일체형) */
+  function buildSmoothAvatarSVG(charKey, mood) {
     const c = AVATAR_META[charKey] || AVATAR_META.moa;
     const m = mood || 'smile';
 
@@ -147,9 +147,9 @@
         <!-- 뒷머리 -->
         ${hairBackSvg}
 
-        <!-- 상반신 (고정 몸통) -->
+        <!-- 상반신 (넓고 안정적인 어깨 실루엣) -->
         <g>
-          <path d="M 52 156 C 54 108 67 87 86 83 L 114 83 C 133 87 146 108 148 156 Z" fill="url(#outfitGrad_${charKey})" stroke="rgba(255,255,255,0.14)" stroke-width="1.2"/>
+          <path d="M 48 156 C 50 107 64 86 85 83 L 115 83 C 136 86 150 107 152 156 Z" fill="url(#outfitGrad_${charKey})"/>
           <!-- 심플 V넥 포인트 -->
           <path d="M 86 83 L 100 105 L 114 83 L 107 82.5 L 100 94 L 93 82.5 Z" fill="${c.outfitAccent}" opacity="0.9"/>
           <!-- 목 -->
@@ -177,21 +177,20 @@
           ${hairFrontSvg}
         </g>
 
-        <!-- 왼팔+왼손 일체형 (한 덩어리로 움직여 손목이 절대 끊기지 않음) -->
+        <!-- 왼팔·왼손목·왼손 일체형 (몸통 안쪽에서 둥글게 뻗어 나와 절대 끊어지지 않음) -->
         <g class="av-limb-left">
-          <!-- 심플 미튼 핸드 (팔목 안쪽에서 자연스럽게 이어짐) -->
-          <path d="M 67 115 L 67 103 C 67 96 79 96 79 103 L 79 107 C 82 105.5 85 107.5 84 111 C 83 113.5 80 115 78 115.5 L 78 121 L 67 121 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1"/>
-          <!-- 팔목 커프스 링 -->
-          <rect x="65.5" y="117" width="15" height="4" rx="2" fill="${c.outfitAccent}"/>
-          <!-- 소매 (하단 몸통까지 깊게 연결되어 회전해도 빈틈 없음) -->
-          <path d="M 65.5 120 L 80.5 120 L 83 162 L 62 162 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+          <!-- 팔과 손목 피부 -->
+          <path d="M 65 130 L 65 104 C 65 97 77 97 77 104 L 77 108 C 80 106.5 83 108.5 82 112 C 81 114.5 78.5 115.5 77 116 L 77 130 Z" fill="url(#skinGrad_${charKey})"/>
+          <!-- 둥근 소매 끝단 -->
+          <path d="M 62 122 C 62 118.5 80 118.5 80 122 L 82 162 L 60 162 Z" fill="${c.outfit}"/>
+          <path d="M 62.5 121.5 Q 71 119 79.5 121.5" stroke="${c.outfitAccent}" stroke-width="2.6" stroke-linecap="round" fill="none"/>
         </g>
 
-        <!-- 오른팔+오른손 일체형 (한 덩어리로 움직여 손목이 절대 끊기지 않음) -->
+        <!-- 오른팔·오른손목·오른손 일체형 (몸통 안쪽에서 둥글게 뻗어 나와 절대 끊어지지 않음) -->
         <g class="av-limb-right">
-          <path d="M 133 112 L 133 100 C 133 93 121 93 121 100 L 121 104 C 118 102.5 115 104.5 116 108 C 117 110.5 120 112 122 112.5 L 122 118 L 133 118 Z" fill="url(#skinGrad_${charKey})" stroke="${c.skinShadow}" stroke-width="1"/>
-          <rect x="119.5" y="114" width="15" height="4" rx="2" fill="${c.outfitAccent}"/>
-          <path d="M 119.5 117 L 134.5 117 L 138 162 L 117 162 Z" fill="${c.outfit}" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+          <path d="M 135 127 L 135 101 C 135 94 123 94 123 101 L 123 105 C 120 103.5 117 105.5 118 109 C 119 111.5 121.5 112.5 123 113 L 123 127 Z" fill="url(#skinGrad_${charKey})"/>
+          <path d="M 138 119 C 138 115.5 120 115.5 120 119 L 118 162 L 140 162 Z" fill="${c.outfit}"/>
+          <path d="M 137.5 118.5 Q 129 116 120.5 118.5" stroke="${c.outfitAccent}" stroke-width="2.6" stroke-linecap="round" fill="none"/>
         </g>
       </svg>
     `;
@@ -204,7 +203,7 @@
     pipEl.classList.add(`char-${key}`);
     const fig = pipEl.querySelector('.avatar-figure');
     if (fig) {
-      fig.innerHTML = buildSimpleAvatarSVG(key, mood || 'smile');
+      fig.innerHTML = buildSmoothAvatarSVG(key, mood || 'smile');
     }
   }
 
@@ -360,7 +359,7 @@
     renderGrid();
   }
 
-  /* 2. PIP 플레이어 (player.html) — 자유 드래그 배치 + 불투명도 분리 제어 */
+  /* 2. PIP 플레이어 (player.html) — 마우스·터치 자유 드래그 이동 + 불투명도 분리 제어 */
   function initPlayer() {
     const root = document.getElementById('playerPageRoot');
     if (!root) return;
@@ -462,7 +461,7 @@
       });
     }
 
-    /* 자유 드래그 이동 (Pointer Events: 마우스 & 터치 모두 지원) */
+    /* 마우스 & 터치 자유 드래그 이동 (MouseEvent + TouchEvent 이중 지원으로 모든 브라우저 보장) */
     if (pipBox && screenBox) {
       let dragging = false;
       let startClientX = 0;
@@ -471,34 +470,30 @@
       let startTop = 0;
       let movedDistance = 0;
 
-      pipBox.addEventListener('pointerdown', (e) => {
-        if (e.button !== undefined && e.button !== 0) return;
-        e.stopPropagation();
-
+      function beginDrag(clientX, clientY) {
         const screenRect = screenBox.getBoundingClientRect();
         const pipRect = pipBox.getBoundingClientRect();
-
-        startClientX = e.clientX;
-        startClientY = e.clientY;
+        startClientX = clientX;
+        startClientY = clientY;
         startLeft = pipRect.left - screenRect.left;
         startTop = pipRect.top - screenRect.top;
         movedDistance = 0;
         dragging = true;
-
         pipBox.classList.add('is-dragging');
-        if (pipBox.setPointerCapture) {
-          try { pipBox.setPointerCapture(e.pointerId); } catch (err) {}
-        }
-      });
+      }
 
-      window.addEventListener('pointermove', (e) => {
+      function moveDrag(clientX, clientY) {
         if (!dragging) return;
-        const dx = e.clientX - startClientX;
-        const dy = e.clientY - startClientY;
+        const dx = clientX - startClientX;
+        const dy = clientY - startClientY;
         movedDistance = Math.hypot(dx, dy);
 
-        const maxLeft = Math.max(0, screenBox.clientWidth - pipBox.offsetWidth);
-        const maxTop = Math.max(0, screenBox.clientHeight - pipBox.offsetHeight);
+        const scaleFactor = (prefs.scale || 100) / 100;
+        const renderedWidth = pipBox.offsetWidth * scaleFactor;
+        const renderedHeight = pipBox.offsetHeight * scaleFactor;
+
+        const maxLeft = Math.max(0, screenBox.clientWidth - renderedWidth);
+        const maxTop = Math.max(0, screenBox.clientHeight - renderedHeight);
 
         const nextLeft = Math.min(Math.max(0, startLeft + dx), maxLeft);
         const nextTop = Math.min(Math.max(0, startTop + dy), maxTop);
@@ -507,18 +502,51 @@
         prefs.customX = Math.round(nextLeft);
         prefs.customY = Math.round(nextTop);
         applyPipStyles(false);
-      });
+      }
 
-      window.addEventListener('pointerup', (e) => {
+      function endDrag() {
         if (!dragging) return;
         dragging = false;
         pipBox.classList.remove('is-dragging');
-        if (pipBox.releasePointerCapture) {
-          try { pipBox.releasePointerCapture(e.pointerId); } catch (err) {}
-        }
-        if (movedDistance > 4) {
+        if (movedDistance > 3) {
           suppressNextScreenClick = true;
         }
+      }
+
+      pipBox.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+        beginDrag(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        e.preventDefault();
+        moveDrag(e.clientX, e.clientY);
+      });
+
+      document.addEventListener('mouseup', () => {
+        endDrag();
+      });
+
+      pipBox.addEventListener('touchstart', (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        e.stopPropagation();
+        beginDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!dragging || !e.touches || !e.touches[0]) return;
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+
+      document.addEventListener('touchend', () => {
+        endDrag();
+      });
+
+      pipBox.addEventListener('click', (e) => {
+        e.stopPropagation();
       });
     }
 
