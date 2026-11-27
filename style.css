@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System (아바타 캐릭터 4종 통합본) */
+/* style.css — MoA Cinematic OTT Design System (풀블리드 사이드 광고 + 아바타 4종 통합본) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -618,13 +618,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--text-secondary);
 }
 
-/* 좌우 양쪽 사이드 광고 슬롯 레이아웃 */
+/* 좌우 양쪽 사이드 광고 슬롯 레이아웃 — 풀블리드 포스터 배너형 */
 .catalog-with-ads {
-  max-width: 1620px;
+  max-width: 1680px;
   margin: 0 auto;
   padding: 0 24px;
   display: grid;
-  grid-template-columns: 168px minmax(0, 1240px) 168px;
+  grid-template-columns: 200px minmax(0, 1220px) 200px;
   justify-content: center;
   align-items: start;
   gap: 24px;
@@ -638,64 +638,82 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   gap: 16px;
 }
 
-.side-ad-box {
-  background: linear-gradient(180deg, rgba(19, 26, 43, 0.92) 0%, rgba(13, 18, 31, 0.96) 100%);
-  border: 1px solid var(--border-subtle);
+.side-ad-poster {
+  position: relative;
+  height: 480px;
   border-radius: var(--radius-md);
-  padding: 18px 14px;
-  min-height: 460px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 16px;
   transition: border-color var(--transition), transform var(--transition);
 }
 
-.side-ad-box:hover {
-  border-color: var(--border-focus);
-  transform: translateY(-2px);
+.side-ad-poster::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 9, 15, 0.45) 0%,
+    rgba(7, 9, 15, 0.15) 38%,
+    rgba(7, 9, 15, 0.92) 72%,
+    rgba(7, 9, 15, 0.98) 100%
+  );
+  z-index: 0;
 }
 
-.side-ad-head {
+.side-ad-poster:hover {
+  border-color: var(--border-focus);
+  transform: translateY(-3px);
+}
+
+.side-ad-poster > * {
+  position: relative;
+  z-index: 1;
+}
+
+.side-ad-poster .ad-badge {
+  align-self: flex-start;
+  background: rgba(7, 9, 15, 0.72);
+  backdrop-filter: blur(6px);
+  color: #cbd5e1;
+}
+
+.side-ad-bottom {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-ad-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent-lavender);
 }
 
 .side-ad-title {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-  color: var(--text-primary);
-  margin-bottom: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.32;
+  color: #ffffff;
+  word-break: keep-all;
 }
 
 .side-ad-desc {
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--text-secondary);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  word-break: keep-all;
+  margin-bottom: 4px;
 }
 
-.side-ad-visual {
-  margin: 18px 0;
-  height: 130px;
-  border-radius: 10px;
-  background-size: cover;
-  background-position: center;
-  border: 1px solid rgba(167, 139, 250, 0.25);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #f8fafc;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
-}
-
-@media (max-width: 1540px) {
+@media (max-width: 1580px) {
   .catalog-with-ads {
     display: block;
     max-width: 1240px;
