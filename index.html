@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoA — AI 수어 통역 OTT 큐레이션 & 학습 플랫폼</title>
+  <title>MoA — AI 수어 통역 OTT 큐레이션 플랫폼</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <!-- 상단 내비게이션 -->
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="MoA 홈">
@@ -18,7 +17,6 @@
 
       <nav class="nav-links" aria-label="주요 메뉴">
         <a href="index.html" class="active">콘텐츠 탐색</a>
-        <a href="player.html?id=1&mode=learn">수어 학습 모드</a>
         <a href="community.html">소통 커뮤니티</a>
         <a href="about.html">서비스 소개</a>
       </nav>
@@ -46,13 +44,12 @@
 
           <div class="ott-hero-actions">
             <a href="player.html?id=1" id="heroWatchBtn" class="btn btn-primary">▶ AI 수어 PIP로 감상하기</a>
-            <a href="player.html?id=1&mode=learn" id="heroLearnBtn" class="btn btn-secondary">수어 표현 배우기</a>
+            <a href="about.html" class="btn btn-secondary">MoA 알아보기</a>
           </div>
 
           <div class="hero-dots" id="heroDots"></div>
         </div>
 
-        <!-- 우측 실시간 아바타 PIP 미리보기 -->
         <div class="pip-widget" aria-label="수어 아바타 미리보기">
           <div class="pip-label"><span>MoA 수어 PIP</span><span>LIVE</span></div>
           <div class="avatar-figure">
@@ -91,22 +88,21 @@
 
         <div class="poster-grid" id="catalogPageGrid"></div>
 
-        <!-- 절제된 네이티브 스폰서 배너 (광고 영역) -->
+        <!-- 절제된 네이티브 스폰서 배너 -->
         <aside class="sponsor-banner" aria-label="제휴 및 배리어프리 캠페인 안내">
           <div class="sponsor-left">
             <span class="ad-badge">PARTNER</span>
             <div class="sponsor-text">
-              <h4>2026 배리어프리 미디어 패스 · 청각장애인 및 수어 학습자 구독 지원 캠페인</h4>
-              <p>제휴 OTT 이용권과 MoA AI 수어 아바타 학습 패키지를 함께 만나보세요.</p>
+              <h4>2026 배리어프리 미디어 패스 · 청각장애인 및 수어 사용자 구독 지원 캠페인</h4>
+              <p>제휴 OTT 이용권과 MoA AI 수어 아바타 오버레이를 함께 만나보세요.</p>
             </div>
           </div>
-          <a href="about.html#live-demo" class="btn btn-secondary btn-sm">자세히 보기</a>
+          <a href="about.html" class="btn btn-secondary btn-sm">자세히 보기</a>
         </aside>
       </div>
     </section>
   </main>
 
-  <!-- 푸터 -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
@@ -116,7 +112,7 @@
             <span>MoA</span>
           </div>
           <p style="max-width:340px;">
-            공식 OTT 영상 위에 실시간 AI 수어 아바타를 더하고, 수어 학습과 소통까지 이어주는 콘텐츠 접근성 플랫폼입니다.
+            공식 OTT 영상 위에 실시간 AI 수어 아바타를 더하는 콘텐츠 접근성 플랫폼입니다.
           </p>
         </div>
 
@@ -124,8 +120,7 @@
           <h4>서비스</h4>
           <ul>
             <li><a href="index.html">콘텐츠 탐색</a></li>
-            <li><a href="player.html?id=1&mode=learn">수어 학습 모드</a></li>
-            <li><a href="community.html">농인 · 학습자 커뮤니티</a></li>
+            <li><a href="community.html">소통 커뮤니티</a></li>
             <li><a href="about.html">서비스 소개</a></li>
           </ul>
         </div>
