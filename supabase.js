@@ -1,4 +1,4 @@
-// supabase.js — MoA 데이터, 학습 단어장, 커뮤니티 및 Supabase 연동 모듈
+// supabase.js — MoA 데이터, 커뮤니티 및 Supabase 연동 공통 모듈
 const SUPABASE_URL = '';
 const SUPABASE_ANON_KEY = '';
 
@@ -18,12 +18,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.netflix.com',
     thumb_url: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“지금 이 쿠키를 한 입 베어 무는 순간, 모든 게 달라질 거야.”',
-    sign_gloss: '[수어] 지금 · 쿠키 · 먹다 · 순간 · 전부 · 변하다',
-    vocab: [
-      { word: '지금 (현재)', hand: '양손 손바닥을 아래로 향하고 가슴 앞에서 살짝 내립니다.', level: '기초' },
-      { word: '변하다 (달라지다)', hand: '양손을 엇갈려 뒤집으며 상태의 전환을 표현합니다.', level: '기초' },
-      { word: '위험 / 선택', hand: '고개를 살짝 숙이며 눈썹을 모으는 비수지 표정을 함께 씁니다.', level: '표정 응용' }
-    ]
+    sign_gloss: '[수어] 지금 · 쿠키 · 먹다 · 순간 · 전부 · 변하다'
   },
   {
     id: 2,
@@ -35,12 +30,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.disneyplus.com',
     thumb_url: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“능력이 중요한 게 아니야. 누굴 지키느냐가 중요한 거지.”',
-    sign_gloss: '[수어] 능력 · 중요 아니다 · 누구 · 지키다 · 중요하다',
-    vocab: [
-      { word: '지키다 (보호하다)', hand: '왼팔을 감싸 안듯 굽히고 오른손으로 위를 덮어 보호하는 동작입니다.', level: '기초' },
-      { word: '중요하다', hand: '오른손 엄지와 검지를 맞대고 가슴 앞에서 힘주어 내립니다.', level: '기초' },
-      { word: '~이 아니다 (부정)', hand: '손바닥을 정면으로 향한 채 좌우로 흔들며 고개를 젓습니다.', level: '문법' }
-    ]
+    sign_gloss: '[수어] 능력 · 중요 아니다 · 누구 · 지키다 · 중요하다'
   },
   {
     id: 3,
@@ -52,12 +42,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.tving.com',
     thumb_url: 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“오늘은 꼭 살아있어 줘. 살아있어 줘서 정말 고마워.”',
-    sign_gloss: '[수어] 오늘 · 꼭 · 살다 · 있다 · 정말 · 고맙다',
-    vocab: [
-      { word: '고맙다 (감사하다)', hand: '왼손 등 위를 오른손 날로 두 번 가볍게 두드립니다.', level: '필수 인사' },
-      { word: '살다 (생명)', hand: '양손을 가슴에서 위로 부드럽게 들어 올리며 호흡을 표현합니다.', level: '기초' },
-      { word: '오늘', hand: '양손 검지를 펴서 몸 앞쪽으로 나란히 내립니다.', level: '기초' }
-    ]
+    sign_gloss: '[수어] 오늘 · 꼭 · 살다 · 있다 · 정말 · 고맙다'
   },
   {
     id: 4,
@@ -69,11 +54,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.tving.com',
     thumb_url: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“네가 오늘 다른 사람에게 속마음 문자를 보낼 줄은 몰랐어.”',
-    sign_gloss: '[수어] 너 · 오늘 · 다른 사람 · 문자 · 보내다 · 몰랐다',
-    vocab: [
-      { word: '문자 / 메시지', hand: '왼손바닥 위에 오른손 엄지로 입력하는 시늉을 한 뒤 앞으로 보냅니다.', level: '일상' },
-      { word: '모르다', hand: '오른손 끝을 가슴에 댔다가 바깥쪽으로 털어내듯 폅니다.', level: '기초' }
-    ]
+    sign_gloss: '[수어] 너 · 오늘 · 다른 사람 · 문자 · 보내다 · 몰랐다'
   },
   {
     id: 5,
@@ -85,11 +66,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.wavve.com',
     thumb_url: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“부탁인데, 선 넘지 마. 경고는 한 번뿐이야.”',
-    sign_gloss: '[수어] 부탁 · 선 · 넘지마 · 경고 · 한 번 · 끝',
-    vocab: [
-      { word: '부탁하다', hand: '양손바닥을 마주 대고 정중히 앞으로 내밉니다.', level: '필수' },
-      { word: '한 번', hand: '오른손 검지 하나를 세워 짧게 아래로 찍습니다.', level: '숫자' }
-    ]
+    sign_gloss: '[수어] 부탁 · 선 · 넘지마 · 경고 · 한 번 · 끝'
   },
   {
     id: 6,
@@ -101,11 +78,7 @@ window.MOA_SAMPLE_CONTENTS = [
     ott_url: 'https://www.netflix.com',
     thumb_url: 'https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1100&q=80',
     sample_dialogue: '“멋지다 연진아, 네가 닿고 싶던 그 자리에서 기다릴게.”',
-    sign_gloss: '[수어] 멋지다 · 연진 · 너 · 원하다 · 자리 · 기다리다',
-    vocab: [
-      { word: '기다리다', hand: '오른손 턱 밑에 받치고 시선을 고정하며 기다리는 표정을 짓습니다.', level: '일상' },
-      { word: '원하다 (바라다)', hand: '양손을 가슴 쪽으로 끌어당기며 간절함을 표현합니다.', level: '기초' }
-    ]
+    sign_gloss: '[수어] 멋지다 · 연진 · 너 · 원하다 · 자리 · 기다리다'
   }
 ];
 
@@ -132,8 +105,8 @@ window.MOA_DEFAULT_POSTS = [
     id: 103,
     category: '함께 수어 공부',
     author: '부산미디어_태하 (학습자)',
-    title: '이번 주 주말 OTT 대사 5문장 수어 쉐도잉 같이 하실 분 구합니다',
-    body: '플레이어 학습 모드에서 0.8x 배속으로 틀어놓고 손동작 따라 해보니 훨씬 외우기 쉽네요. 기초 단어부터 같이 연습하실 분 댓글 남겨주세요!',
+    title: '이번 주 주말 OTT 대사 수어 쉐도잉 같이 하실 분 구합니다',
+    body: '플레이어에서 싱크 속도를 0.8x로 낮춰놓고 손동작 따라 해보니 훨씬 익히기 쉽네요. 기초부터 같이 연습하실 분 댓글 남겨주세요!',
     likes: 9,
     date: '어제'
   }
