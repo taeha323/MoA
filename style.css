@@ -1,4 +1,4 @@
-/* style.css — MoA Cinematic OTT Design System (테두리 빛샘 해결 + 풀블리드 배너) */
+/* style.css — MoA Cinematic OTT Design System (리얼 휴먼 수어 아바타 SVG 엔진 포함) */
 :root {
   --bg-void: #07090f;
   --bg-navy: #0d121f;
@@ -275,15 +275,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   background: var(--accent-lavender);
 }
 
-/* 아바타 PIP 위젯 & 캐릭터 4종 테마 */
+/* =========================================================
+   리얼 휴먼 수어 아바타 PIP 위젯 & 관절/표정 애니메이션
+   ========================================================= */
 .pip-widget {
-  width: 184px;
-  background: rgba(13, 18, 31, 0.92);
-  backdrop-filter: blur(12px);
+  width: 214px;
+  background: radial-gradient(circle at 50% 25%, rgba(30, 41, 59, 0.94) 0%, rgba(9, 13, 24, 0.97) 100%);
+  backdrop-filter: blur(14px);
   border: 1.5px solid var(--accent-lavender);
   border-radius: var(--radius-md);
   padding: 12px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.72);
   text-align: center;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
@@ -292,132 +294,140 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   font-size: 11px;
   font-weight: 700;
   color: var(--accent-lavender);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .avatar-figure {
-  height: 94px;
+  height: 152px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 50% 35%, rgba(59, 130, 246, 0.14), rgba(7, 9, 15, 0.55) 75%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-}
-
-.avatar-silhouette {
+  overflow: hidden;
   position: relative;
-  width: 62px;
-  height: 80px;
 }
 
-.av-hair {
-  position: absolute;
-  top: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 16px;
-  border-radius: 14px 14px 4px 4px;
-  background: #334155;
-  z-index: 2;
-  transition: all 0.25s ease;
+.human-avatar-svg {
+  width: 176px;
+  height: 150px;
+  display: block;
+  overflow: visible;
 }
 
-.av-head {
-  position: relative;
-  z-index: 1;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  margin: 2px auto 6px;
-  transition: background 0.25s ease;
+/* 고개·상체 자연 호흡 및 시선 끄덕임 */
+.av-head-group {
+  transform-origin: 100px 66px;
+  animation: headExpressive 3.6s infinite ease-in-out;
 }
 
-.av-body {
-  width: 42px;
-  height: 40px;
-  border-radius: 14px 14px 6px 6px;
-  background: var(--accent-gradient);
-  margin: 0 auto;
-  transition: all 0.25s ease;
+.av-torso-group {
+  transform-origin: 100px 150px;
+  animation: torsoBreath 3.6s infinite ease-in-out;
 }
 
-.av-hand {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #f8fafc;
-  position: absolute;
-  top: 34px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+/* 눈 깜빡임 */
+.av-eyelids {
+  transform-origin: 100px 42px;
+  animation: eyeBlink 4.4s infinite;
 }
 
-.av-hand.left { left: 0; animation: signGestureL 1.6s infinite ease-in-out; }
-.av-hand.right { right: 0; animation: signGestureR 1.6s infinite ease-in-out; }
+/* 왼팔·왼손 수어 궤적 (표현적 3단계 관절 모션) */
+.av-arm-left {
+  transform-origin: 66px 96px;
+  animation: kslLeftArm 2.4s infinite ease-in-out;
+}
+.av-hand-left {
+  transform-origin: 58px 118px;
+  animation: kslLeftWrist 2.4s infinite ease-in-out;
+}
 
-/* 캐릭터 1: 모아 (기본 블루·라벤더) */
+/* 오른팔·오른손 수어 궤적 */
+.av-arm-right {
+  transform-origin: 134px 96px;
+  animation: kslRightArm 2.4s infinite ease-in-out;
+}
+.av-hand-right {
+  transform-origin: 142px 114px;
+  animation: kslRightWrist 2.4s infinite ease-in-out;
+}
+
+/* 손가락 미세 관절 굴곡 */
+.av-fingers-active {
+  animation: fingerArticulate 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes headExpressive {
+  0%, 100% { transform: rotate(0deg) translateY(0px); }
+  25% { transform: rotate(-2.5deg) translateY(1.5px); }
+  55% { transform: rotate(2deg) translateY(-1px); }
+  80% { transform: rotate(-1deg) translateY(1px); }
+}
+
+@keyframes torsoBreath {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.015); }
+}
+
+@keyframes eyeBlink {
+  0%, 45%, 49%, 92%, 96%, 100% { transform: scaleY(1); }
+  47%, 94% { transform: scaleY(0.08); }
+}
+
+@keyframes kslLeftArm {
+  0%, 100% { transform: rotate(0deg) translate(0px, 0px); }
+  33% { transform: rotate(-12deg) translate(6px, -12px); }
+  66% { transform: rotate(6deg) translate(12px, -6px); }
+}
+
+@keyframes kslLeftWrist {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  33% { transform: rotate(14deg) scale(1.04); }
+  66% { transform: rotate(-10deg) scale(0.97); }
+}
+
+@keyframes kslRightArm {
+  0%, 100% { transform: rotate(0deg) translate(0px, 0px); }
+  33% { transform: rotate(14deg) translate(-8px, -16px); }
+  66% { transform: rotate(-8deg) translate(-14px, -9px); }
+}
+
+@keyframes kslRightWrist {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  33% { transform: rotate(-16deg) scale(1.05); }
+  66% { transform: rotate(12deg) scale(0.96); }
+}
+
+@keyframes fingerArticulate {
+  0% { transform: scaleY(1); }
+  100% { transform: scaleY(0.86); }
+}
+
+/* 캐릭터 4종 테두리/포인트 컬러 */
 .pip-widget.char-moa { border-color: #a78bfa; }
 .pip-widget.char-moa .pip-label { color: #a78bfa; }
-.pip-widget.char-moa .av-body { background: linear-gradient(135deg, #3b82f6 0%, #a78bfa 100%); }
 
-/* 캐릭터 2: 서연 (감성 로즈·코랄, 긴 헤어 실루엣) */
 .pip-widget.char-seoyeon { border-color: #f472b6; }
 .pip-widget.char-seoyeon .pip-label { color: #f9a8d4; }
-.pip-widget.char-seoyeon .av-hair {
-  width: 34px;
-  height: 30px;
-  border-radius: 16px 16px 8px 8px;
-  background: #4c1d95;
-  z-index: 0;
-}
-.pip-widget.char-seoyeon .av-head { background: #ffe4e6; }
-.pip-widget.char-seoyeon .av-body {
-  width: 38px;
-  border-radius: 16px 16px 8px 8px;
-  background: linear-gradient(135deg, #ec4899 0%, #fb7185 100%);
-}
 
-/* 캐릭터 3: 도현 (에메랄드·시안, 넓은 숄더 라인) */
 .pip-widget.char-dohyun { border-color: #34d399; }
 .pip-widget.char-dohyun .pip-label { color: #6ee7b7; }
-.pip-widget.char-dohyun .av-hair {
-  width: 26px;
-  height: 11px;
-  background: #0f172a;
-}
-.pip-widget.char-dohyun .av-head { background: #e2e8f0; }
-.pip-widget.char-dohyun .av-body {
-  width: 48px;
-  border-radius: 10px 10px 4px 4px;
-  background: linear-gradient(135deg, #059669 0%, #06b6d4 100%);
-}
 
-/* 캐릭터 4: 노바 (고대비 미니멀 모노크롬) */
-.pip-widget.char-nova { border-color: #e2e8f0; background: rgba(7, 9, 15, 0.95); }
+.pip-widget.char-nova { border-color: #e2e8f0; background: rgba(7, 9, 15, 0.96); }
 .pip-widget.char-nova .pip-label { color: #f8fafc; }
-.pip-widget.char-nova .av-hair { display: none; }
-.pip-widget.char-nova .av-head { background: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.45); }
-.pip-widget.char-nova .av-body {
-  background: linear-gradient(180deg, #e2e8f0 0%, #64748b 100%);
-}
-
-@keyframes signGestureL {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(8px, -11px); }
-}
-@keyframes signGestureR {
-  0%, 100% { transform: translate(0, -6px); }
-  50% { transform: translate(-8px, -13px); }
-}
 
 .pip-gloss {
   margin-top: 8px;
   font-size: 11px;
-  color: #cbd5e1;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 4px 8px;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 5px 8px;
   border-radius: 6px;
+  line-height: 1.35;
 }
 
 /* 섹션 공통 */
@@ -777,17 +787,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   border: 1px solid var(--border-subtle);
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  max-width: 72%;
+  max-width: 68%;
 }
 
 .demo-caption-bar p { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
 .demo-caption-bar span { font-size: 12px; color: var(--accent-lavender); }
 
 .demo-pip { position: absolute; transition: all 0.25s ease; }
-.demo-pip.pos-bottom-right { right: 20px; bottom: 64px; transform-origin: bottom right; }
-.demo-pip.pos-bottom-left  { left: 20px;  bottom: 64px; transform-origin: bottom left; }
-.demo-pip.pos-top-right    { right: 20px; top: 58px;    transform-origin: top right; }
-.demo-pip.pos-top-left     { left: 20px;  top: 58px;    transform-origin: top left; }
+.demo-pip.pos-bottom-right { right: 20px; bottom: 56px; transform-origin: bottom right; }
+.demo-pip.pos-bottom-left  { left: 20px;  bottom: 56px; transform-origin: bottom left; }
+.demo-pip.pos-top-right    { right: 20px; top: 54px;    transform-origin: top right; }
+.demo-pip.pos-top-left     { left: 20px;  top: 54px;    transform-origin: top left; }
 .demo-pip.is-hidden        { opacity: 0; pointer-events: none; transform: scale(0.85); }
 
 .demo-control-panel {
