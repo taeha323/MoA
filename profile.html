@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내 프로필 · 설정 — MoA</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="MoA 홈">
+        <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="moaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3B82F6"/>
+              <stop offset="100%" stop-color="#A78BFA"/>
+            </linearGradient>
+          </defs>
+          <path d="M4 22V6C4 6 5.8 4 7.5 4C9.2 4 11 6.5 12.5 8.5C14 10.5 15.5 14.5 17 14.5C18.5 14.5 19.5 10.5 20.8 8.2C22 5.8 23.5 4 25.2 4C27 4 29 6 29.5 7C30 8 28.5 12 27 15C25.5 18 24 19 22.5 19C21 19 19.5 17 19 16C18.5 15 17.5 12.5 17 12.5C16.5 12.5 15.8 14 15 15.5C13.5 18.5 11.5 21 9.5 21.8C7.5 22.6 4 22 4 22Z" stroke="url(#moaGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 12.5C17.5 12.5 18 13.5 18 14.2C18 14.8 17.5 15.3 17 15.3C16.5 15.3 16 14.8 16 14.2C16 13.5 16.5 12.5 17 12.5Z" fill="#3B82F6"/>
+          <path d="M23 11C23 10 24.5 10 24.5 11" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">MoA</span>
+      </a>
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="index.html">콘텐츠 탐색</a>
+        <a href="about.html">서비스 소개</a>
+        <a href="pricing.html">멤버십</a>
+        <a href="community.html">소통 커뮤니티</a>
+        <a href="profile.html" class="active">내 프로필 · 설정</a>
+      </nav>
+      <div class="header-cta">
+        <a href="pricing.html" class="btn btn-secondary btn-sm">멤버십 관리</a>
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="profilePageRoot" style="padding-top: 84px;">
+    <section class="section">
+      <div class="container" style="max-width:760px;">
+        <div style="margin-bottom:28px;">
+          <div class="eyebrow">PROFILE & PIP PREFERENCES</div>
+          <h1 class="section-title">내 프로필 및 수어 PIP 기본 설정</h1>
+          <p class="section-desc">저장한 설정은 시연 플레이어(`player.html`)에 기본값으로 자동 반영됩니다.</p>
+        </div>
+
+        <div class="about-card highlight" style="margin-bottom:24px; padding:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <span class="eyebrow" style="margin-bottom:4px;">CURRENT MEMBERSHIP</span>
+            <h2 id="profilePlanBadge" style="font-size:18px;">Basic 무료 플랜 이용 중</h2>
+          </div>
+          <a href="pricing.html" class="btn btn-secondary btn-sm">멤버십 변경 (월 3,990원)</a>
+        </div>
+
+        <form class="compose-card" id="profileForm">
+          <div class="form-field">
+            <label for="profName">이름 / 닉네임</label>
+            <input type="text" id="profName" class="form-input" required />
+          </div>
+
+          <div class="form-field">
+            <label for="profRole">시청 유형</label>
+            <select id="profRole" class="form-select">
+              <option value="수어 학습자 · 미디어 기획">수어 학습자 · 미디어 기획</option>
+              <option value="농인 / 청각장애인 시청자">농인 / 청각장애인 시청자</option>
+              <option value="가족 · 동료 시청자">가족 · 동료 시청자</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="profScale">기본 아바타 크기 (%)</label>
+            <input type="number" id="profScale" class="form-input" min="75" max="135" step="5" />
+          </div>
+
+          <div class="form-field">
+            <label for="profOpacity">기본 아바타 투명도 (%)</label>
+            <input type="number" id="profOpacity" class="form-input" min="50" max="100" step="5" />
+          </div>
+
+          <div class="form-field">
+            <label for="profPosition">기본 화면 위치</label>
+            <select id="profPosition" class="form-select">
+              <option value="bottom-right">우측 하단</option>
+              <option value="bottom-left">좌측 하단</option>
+              <option value="top-right">우측 상단</option>
+              <option value="top-left">좌측 상단</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="profSpeed">기본 싱크 속도 (0.8 ~ 1.4)</label>
+            <input type="number" id="profSpeed" class="form-input" min="0.8" max="1.4" step="0.1" />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;">프로필 및 PIP 설정 저장</button>
+          <p id="profileSaveMsg" style="font-size:13px; color:var(--accent-lavender); margin-top:12px; min-height:20px;"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 MoA. All Rights Reserved.</span>
+      <span>AI Sign Language OTT Accessibility</span>
+    </div>
+  </footer>
+
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
