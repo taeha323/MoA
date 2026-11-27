@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MoA — 모든 이야기가 손끝으로 모이는 곳</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20261127" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -62,22 +62,9 @@
           <div class="hero-dots" id="heroDots" aria-label="추천 배너 선택"></div>
         </div>
 
-        <!-- 우측 실시간 수어 아바타 PIP 미리보기 -->
+        <!-- 우측 실시간 수어 아바타 PIP 미리보기 (문구 없이 아바타만 표시) -->
         <aside class="pip-widget char-moa" aria-label="실시간 AI 수어 아바타 미리보기">
-          <div class="pip-label">
-            <span>KSL · 모아</span>
-            <span>LIVE</span>
-          </div>
-          <div class="avatar-figure">
-            <div class="avatar-silhouette">
-              <div class="av-hair"></div>
-              <div class="av-head"></div>
-              <div class="av-body"></div>
-              <div class="av-hand left"></div>
-              <div class="av-hand right"></div>
-            </div>
-          </div>
-          <div class="pip-gloss" id="heroSignGloss">[수어] 자막 · 넘다 · 표정 · 감정 · 모으다</div>
+          <div class="avatar-figure"></div>
         </aside>
       </div>
     </section>
@@ -206,7 +193,7 @@
     </div>
   </footer>
 
-  <script src="supabase.js"></script>
-  <script src="app.js"></script>
+  <script src="supabase.js?v=20261127"></script>
+  <script src="app.js?v=20261127"></script>
 </body>
 </html>
