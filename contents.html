@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>콘텐츠 탐색 — MoA</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">MoA</span>
+        <span>MoA</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#about">서비스 소개</a>
+        <a href="index.html#features">핵심 기능</a>
+        <a href="index.html#live-demo">실시간 체험</a>
+        <a href="contents.html" class="active">콘텐츠 탐색</a>
+      </nav>
+      <div class="header-cta">
+        <span class="demo-tag">시연용 카탈로그</span>
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">플레이어 열기</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding-top: 84px;">
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">OTT CURATION LIBRARY</div>
+          <h1 class="section-title">AI 수어 지원 콘텐츠 탐색</h1>
+          <p class="section-desc">
+            플랫폼별 수어 트랙이 준비된 시연용 작품 목록입니다. 작품을 선택하면 전용 플레이어에서 수어 PIP와 함께 감상할 수 있습니다.
+          </p>
+        </div>
+
+        <div class="showcase-toolbar">
+          <div class="filter-group">
+            <button type="button" class="filter-chip active" data-platform="ALL">전체</button>
+            <button type="button" class="filter-chip" data-platform="Netflix">Netflix</button>
+            <button type="button" class="filter-chip" data-platform="TVING">TVING</button>
+            <button type="button" class="filter-chip" data-platform="Wavve">Wavve</button>
+            <button type="button" class="filter-chip" data-platform="Disney+">Disney+</button>
+          </div>
+
+          <input
+            type="search"
+            id="catalogSearchInput"
+            placeholder="작품명 또는 장르 검색..."
+            aria-label="작품명 또는 장르 검색"
+            style="padding:10px 16px; border-radius:999px; border:1px solid var(--border-subtle); background:var(--bg-surface); color:#fff; min-width:250px;"
+          />
+        </div>
+
+        <div class="poster-grid" id="catalogPageGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-bottom">
+      <span>© 2026 MoA Project · 표기된 작품 이미지는 시연용 샘플입니다.</span>
+      <a href="index.html">← 공식 랜딩 페이지로 돌아가기</a>
+    </div>
+  </footer>
+
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
