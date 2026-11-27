@@ -11,24 +11,37 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="MoA 홈">
-        <span class="logo-mark">MoA</span>
-        <span>MoA</span>
+        <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="moaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3B82F6"/>
+              <stop offset="100%" stop-color="#A78BFA"/>
+            </linearGradient>
+          </defs>
+          <path d="M4 22V6C4 6 5.8 4 7.5 4C9.2 4 11 6.5 12.5 8.5C14 10.5 15.5 14.5 17 14.5C18.5 14.5 19.5 10.5 20.8 8.2C22 5.8 23.5 4 25.2 4C27 4 29 6 29.5 7C30 8 28.5 12 27 15C25.5 18 24 19 22.5 19C21 19 19.5 17 19 16C18.5 15 17.5 12.5 17 12.5C16.5 12.5 15.8 14 15 15.5C13.5 18.5 11.5 21 9.5 21.8C7.5 22.6 4 22 4 22Z" stroke="url(#moaGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 12.5C17.5 12.5 18 13.5 18 14.2C18 14.8 17.5 15.3 17 15.3C16.5 15.3 16 14.8 16 14.2C16 13.5 16.5 12.5 17 12.5Z" fill="#3B82F6"/>
+          <path d="M23 11C23 10 24.5 10 24.5 11" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text">MoA</span>
       </a>
 
       <nav class="nav-links" aria-label="주요 메뉴">
         <a href="index.html" class="active">콘텐츠 탐색</a>
-        <a href="community.html">소통 커뮤니티</a>
         <a href="about.html">서비스 소개</a>
+        <a href="pricing.html">멤버십</a>
+        <a href="community.html">소통 커뮤니티</a>
+        <a href="profile.html">내 프로필 · 설정</a>
       </nav>
 
       <div class="header-cta">
-        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어 열기</a>
+        <a href="pricing.html" class="btn btn-secondary btn-sm">월 3,990원 구독</a>
+        <a href="player.html?id=1" class="btn btn-primary btn-sm">PIP 플레이어</a>
       </div>
     </div>
   </header>
 
   <main>
-    <!-- 4초 간격 자동 롤링 메인 히어로 배너 -->
+    <!-- 1. 4초 간격 자동 롤링 OTT 메인 히어로 배너 -->
     <section class="ott-hero" id="ottHeroSection" aria-label="추천 수어 지원 콘텐츠">
       <div class="ott-hero-bg" id="heroBg"></div>
       <div class="ott-hero-overlay"></div>
@@ -36,15 +49,15 @@
       <div class="container ott-hero-inner">
         <div class="ott-hero-content">
           <div class="ott-hero-meta">
-            <span class="platform-chip" id="heroPlatform">Netflix</span>
-            <span class="genre-chip" id="heroGenre">판타지 · 스릴러</span>
+            <span class="platform-chip" id="heroPlatform">모아</span>
+            <span class="genre-chip" id="heroGenre">MoA 오리지널 · 실시간 수어 시연</span>
           </div>
-          <h1 class="ott-hero-title" id="heroTitle">하이쿠키 (High Cookie)</h1>
+          <h1 class="ott-hero-title" id="heroTitle">모아 (MoA) — 배리어프리 시네마 시연작</h1>
           <p class="ott-hero-desc" id="heroDesc"></p>
 
           <div class="ott-hero-actions">
-            <a href="player.html?id=1" id="heroWatchBtn" class="btn btn-primary">▶ AI 수어 PIP로 감상하기</a>
-            <a href="about.html" class="btn btn-secondary">MoA 알아보기</a>
+            <a href="player.html?id=1" id="heroWatchBtn" class="btn btn-primary">▶ MoA 수어 PIP 시연 영상 재생</a>
+            <a href="pricing.html" class="btn btn-secondary">MoA Pass 월 3,990원</a>
           </div>
 
           <div class="hero-dots" id="heroDots"></div>
@@ -65,39 +78,83 @@
       </div>
     </section>
 
-    <!-- 콘텐츠 탐색 섹션 -->
+    <!-- 2. 좌우 사이드 광고 + 중앙 콘텐츠 탐색 그리드 + 하단 네이티브 배너 -->
     <section class="section">
-      <div class="container">
-        <div class="showcase-toolbar">
-          <div class="filter-group">
-            <button type="button" class="filter-chip active" data-platform="ALL">전체</button>
-            <button type="button" class="filter-chip" data-platform="Netflix">Netflix</button>
-            <button type="button" class="filter-chip" data-platform="TVING">TVING</button>
-            <button type="button" class="filter-chip" data-platform="Wavve">Wavve</button>
-            <button type="button" class="filter-chip" data-platform="Disney+">Disney+</button>
+      <div class="catalog-with-ads">
+        <!-- 좌측 사이드 광고 슬롯 -->
+        <aside class="side-ad-rail" aria-label="좌측 제휴 광고">
+          <div class="side-ad-box">
+            <div>
+              <div class="side-ad-head">
+                <span class="ad-badge">AD · PARTNER</span>
+              </div>
+              <h4 class="side-ad-title">배리어프리 영화제 2026</h4>
+              <p class="side-ad-desc">
+                청각장애인과 수어 사용자를 위한 배리어프리 상영관 & 온라인 기획전 안내
+              </p>
+              <div class="side-ad-visual">
+                <span>BARRIER-FREE</span>
+                <span style="font-size:11px; color:#cbd5e1; margin-top:4px;">문화접근성 캠페인</span>
+              </div>
+            </div>
+            <a href="about.html" class="btn btn-secondary btn-sm" style="width:100%;">캠페인 확인</a>
+          </div>
+        </aside>
+
+        <!-- 중앙 메인 콘텐츠 탐색 영역 -->
+        <div>
+          <div class="showcase-toolbar">
+            <div class="filter-group">
+              <button type="button" class="filter-chip active" data-platform="ALL">전체</button>
+              <button type="button" class="filter-chip" data-platform="Netflix">Netflix</button>
+              <button type="button" class="filter-chip" data-platform="TVING">TVING</button>
+              <button type="button" class="filter-chip" data-platform="Wavve">Wavve</button>
+              <button type="button" class="filter-chip" data-platform="Disney+">Disney+</button>
+              <button type="button" class="filter-chip" data-platform="모아">모아</button>
+            </div>
+
+            <input
+              type="search"
+              id="catalogSearchInput"
+              class="search-box"
+              placeholder="작품명 또는 장르 검색..."
+              aria-label="작품명 또는 장르 검색"
+            />
           </div>
 
-          <input
-            type="search"
-            id="catalogSearchInput"
-            class="search-box"
-            placeholder="작품명 또는 장르 검색..."
-            aria-label="작품명 또는 장르 검색"
-          />
+          <div class="poster-grid" id="catalogPageGrid"></div>
+
+          <!-- 하단 가로형 네이티브 스폰서 배너 -->
+          <aside class="sponsor-banner" aria-label="멤버십 및 제휴 캠페인 안내">
+            <div class="sponsor-left">
+              <span class="ad-badge">AD · MEMBERSHIP</span>
+              <div class="sponsor-text">
+                <h4>월 3,990원 MoA Pass로 모든 수어 지원작을 광고 없이 무제한 감상하세요</h4>
+                <p>4대 OTT 연동 무제한 수어 통역과 맞춤형 아바타 PIP 설정이 모두 포함됩니다.</p>
+              </div>
+            </div>
+            <a href="pricing.html" class="btn btn-secondary btn-sm">구독 플랜 보기</a>
+          </aside>
         </div>
 
-        <div class="poster-grid" id="catalogPageGrid"></div>
-
-        <!-- 절제된 네이티브 스폰서 배너 -->
-        <aside class="sponsor-banner" aria-label="제휴 및 배리어프리 캠페인 안내">
-          <div class="sponsor-left">
-            <span class="ad-badge">PARTNER</span>
-            <div class="sponsor-text">
-              <h4>2026 배리어프리 미디어 패스 · 청각장애인 및 수어 사용자 구독 지원 캠페인</h4>
-              <p>제휴 OTT 이용권과 MoA AI 수어 아바타 오버레이를 함께 만나보세요.</p>
+        <!-- 우측 사이드 광고 슬롯 -->
+        <aside class="side-ad-rail" aria-label="우측 멤버십 광고">
+          <div class="side-ad-box">
+            <div>
+              <div class="side-ad-head">
+                <span class="ad-badge">AD · PASS</span>
+              </div>
+              <h4 class="side-ad-title">광고 없이 몰입하는 MoA Pass</h4>
+              <p class="side-ad-desc">
+                월 3,990원으로 전 회차 무제한 수어 PIP와 아바타 위치·크기 저장 기능을 바로 사용하세요.
+              </p>
+              <div class="side-ad-visual">
+                <span style="font-size:18px; color:#fff;">3,990원 / 월</span>
+                <span style="font-size:11px; color:var(--accent-lavender); margin-top:4px;">AD-FREE · UNLIMITED</span>
+              </div>
             </div>
+            <a href="pricing.html" class="btn btn-primary btn-sm" style="width:100%;">구독 시작하기</a>
           </div>
-          <a href="about.html" class="btn btn-secondary btn-sm">자세히 보기</a>
         </aside>
       </div>
     </section>
@@ -107,10 +164,18 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-col">
-          <div class="logo" style="margin-bottom:12px;">
-            <span class="logo-mark">MoA</span>
-            <span>MoA</span>
-          </div>
+          <a href="index.html" class="logo" style="margin-bottom:12px;">
+            <svg width="28" height="22" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="moaFooterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#3B82F6"/>
+                  <stop offset="100%" stop-color="#A78BFA"/>
+                </linearGradient>
+              </defs>
+              <path d="M4 22V6C4 6 5.8 4 7.5 4C9.2 4 11 6.5 12.5 8.5C14 10.5 15.5 14.5 17 14.5C18.5 14.5 19.5 10.5 20.8 8.2C22 5.8 23.5 4 25.2 4C27 4 29 6 29.5 7C30 8 28.5 12 27 15C25.5 18 24 19 22.5 19C21 19 19.5 17 19 16C18.5 15 17.5 12.5 17 12.5C16.5 12.5 15.8 14 15 15.5C13.5 18.5 11.5 21 9.5 21.8C7.5 22.6 4 22 4 22Z" stroke="url(#moaFooterGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="logo-text">MoA</span>
+          </a>
           <p style="max-width:340px;">
             공식 OTT 영상 위에 실시간 AI 수어 아바타를 더하는 콘텐츠 접근성 플랫폼입니다.
           </p>
@@ -120,8 +185,10 @@
           <h4>서비스</h4>
           <ul>
             <li><a href="index.html">콘텐츠 탐색</a></li>
-            <li><a href="community.html">소통 커뮤니티</a></li>
             <li><a href="about.html">서비스 소개</a></li>
+            <li><a href="pricing.html">멤버십 구독 (월 3,990원)</a></li>
+            <li><a href="community.html">소통 커뮤니티</a></li>
+            <li><a href="profile.html">내 프로필 · 설정</a></li>
           </ul>
         </div>
 
@@ -136,8 +203,8 @@
       </div>
 
       <div class="footer-bottom">
-        <span>© 2026 MoA. 콘텐츠 포스터 및 트랙 일부는 시연용 샘플 데이터를 포함하고 있습니다.</span>
-        <span>All Rights Reserved.</span>
+        <span>© 2026 MoA. All Rights Reserved.</span>
+        <span>AI Sign Language OTT Accessibility</span>
       </div>
     </div>
   </footer>
