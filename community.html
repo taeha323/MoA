@@ -11,16 +11,14 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="MoA 홈">
-        <svg width="34" height="26" viewBox="0 0 34 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <linearGradient id="moaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="moaLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#3B82F6"/>
               <stop offset="100%" stop-color="#A78BFA"/>
             </linearGradient>
           </defs>
-          <path d="M4 22V6C4 6 5.8 4 7.5 4C9.2 4 11 6.5 12.5 8.5C14 10.5 15.5 14.5 17 14.5C18.5 14.5 19.5 10.5 20.8 8.2C22 5.8 23.5 4 25.2 4C27 4 29 6 29.5 7C30 8 28.5 12 27 15C25.5 18 24 19 22.5 19C21 19 19.5 17 19 16C18.5 15 17.5 12.5 17 12.5C16.5 12.5 15.8 14 15 15.5C13.5 18.5 11.5 21 9.5 21.8C7.5 22.6 4 22 4 22Z" stroke="url(#moaGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 12.5C17.5 12.5 18 13.5 18 14.2C18 14.8 17.5 15.3 17 15.3C16.5 15.3 16 14.8 16 14.2C16 13.5 16.5 12.5 17 12.5Z" fill="#3B82F6"/>
-          <path d="M23 11C23 10 24.5 10 24.5 11" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 16C5.46243 16 3 13.3137 3 10C3 6.68629 5.46243 4 8.5 4C12.5 4 15.5 16 19.5 16C22.5376 16 25 13.3137 25 10C25 6.68629 22.5376 4 19.5 4C15.5 4 12.5 16 8.5 16Z" stroke="url(#moaLogoGrad)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="logo-text">MoA</span>
       </a>
@@ -41,53 +39,53 @@
   <main id="communityPageRoot" style="padding-top: 84px;">
     <section class="section">
       <div class="container">
-        <div style="margin-bottom:32px;">
+        <div style="margin-bottom:36px;">
           <div class="eyebrow">COMMUNITY</div>
-          <h1 class="section-title">수어 시청자 & 학습자 소통 공간</h1>
-          <p class="section-desc">작품 감상 후기, 수어 표현 질문, 함께 공부할 스터디를 자유롭게 나누세요.</p>
+          <h1 class="section-title">농인·청인 시청자가 함께 나누는<br />수어 감상 & 배리어프리 커뮤니티</h1>
+          <p class="section-desc">수어 통역 후기, 인상 깊었던 수어 표현 질문, 함께 보는 감상 모임 소식을 자유롭게 공유해 보세요.</p>
         </div>
 
-        <div class="showcase-toolbar">
-          <div class="filter-group">
-            <button type="button" class="filter-chip comm-filter active" data-cat="ALL">전체</button>
-            <button type="button" class="filter-chip comm-filter" data-cat="작품 추천 & 후기">작품 추천 & 후기</button>
-            <button type="button" class="filter-chip comm-filter" data-cat="수어 표현 질문">수어 표현 질문</button>
-            <button type="button" class="filter-chip comm-filter" data-cat="함께 수어 공부">함께 수어 공부</button>
-          </div>
+        <div class="filter-group" style="margin-bottom:28px;">
+          <button type="button" class="filter-chip comm-filter active" data-cat="ALL">전체</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="작품 추천 & 후기">작품 추천 & 후기</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="수어 표현 질문">수어 표현 질문</button>
+          <button type="button" class="filter-chip comm-filter" data-cat="함께 수어 공부">함께 수어 공부</button>
         </div>
 
         <div class="community-layout">
-          <form class="compose-card" id="communityPostForm">
-            <div class="eyebrow" style="margin-bottom:6px;">NEW POST</div>
-            <h2 style="font-size:18px; margin-bottom:16px;">새 글 남기기</h2>
+          <!-- 좌측: 새 글 작성 폼 -->
+          <aside class="compose-card" aria-label="새 게시글 작성">
+            <h2 style="font-size:18px; margin-bottom:16px;">새 이야기 남기기</h2>
+            <form id="communityPostForm">
+              <div class="form-field">
+                <label for="postCategory">카테고리</label>
+                <select id="postCategory" class="form-select">
+                  <option value="작품 추천 & 후기">작품 추천 & 후기</option>
+                  <option value="수어 표현 질문">수어 표현 질문</option>
+                  <option value="함께 수어 공부">함께 수어 공부</option>
+                </select>
+              </div>
 
-            <div class="form-field">
-              <label for="postCategory">카테고리</label>
-              <select id="postCategory" class="form-select">
-                <option value="작품 추천 & 후기">작품 추천 & 후기</option>
-                <option value="수어 표현 질문">수어 표현 질문</option>
-                <option value="함께 수어 공부">함께 수어 공부</option>
-              </select>
-            </div>
+              <div class="form-field">
+                <label for="postAuthor">작성자 닉네임</label>
+                <input type="text" id="postAuthor" class="form-input" placeholder="예: 부산시청자_태하" />
+              </div>
 
-            <div class="form-field">
-              <label for="postAuthor">닉네임 / 역할</label>
-              <input type="text" id="postAuthor" class="form-input" placeholder="예: 부산시청자_민수 (농인 시청자)" />
-            </div>
+              <div class="form-field">
+                <label for="postTitle">제목</label>
+                <input type="text" id="postTitle" class="form-input" placeholder="제목을 입력해 주세요" required />
+              </div>
 
-            <div class="form-field">
-              <label for="postTitle">제목</label>
-              <input type="text" id="postTitle" class="form-input" placeholder="제목을 입력하세요" required />
-            </div>
+              <div class="form-field">
+                <label for="postBody">내용</label>
+                <textarea id="postBody" class="form-textarea" placeholder="감상평이나 수어 표현에 대한 질문을 자유롭게 적어 주세요." required></textarea>
+              </div>
 
-            <div class="form-field">
-              <label for="postBody">내용</label>
-              <textarea id="postBody" class="form-textarea" placeholder="질문이나 후기, 스터디 모집 내용을 적어주세요." required></textarea>
-            </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;">게시글 등록하기</button>
+            </form>
+          </aside>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">게시글 등록</button>
-          </form>
-
+          <!-- 우측: 게시글 목록 -->
           <div class="post-list" id="communityPostList"></div>
         </div>
       </div>
